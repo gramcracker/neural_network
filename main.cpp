@@ -17,7 +17,7 @@ using namespace std;
 int main (int argc, char **argv)
 {
     srand(time(NULL));
-    //sample network and Training
+    //sample network
     vector<int> dimensions={5,6,8};
     net net1(dimensions);
 
