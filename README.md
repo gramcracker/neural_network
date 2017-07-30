@@ -1,6 +1,4 @@
 # neural_network
-This is my personal project to make a fast and powerful neural networking engine.
-I'd like anyone interested to feel free to help, especially if you think you can help optimise it.
-if any questions, feel free to contact me.
-this code is open source, but if you decide to use this code, be sure to let me know.
+This is my personal project to make a fast and flexible neural network library.
+I created it specifically with natural language processing in mind but works well for just about anything. It is still a work in process and I haven't updated it in a while but will come shortly once I work out some bugs.
 
