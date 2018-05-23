@@ -1,0 +1,6 @@
+Compiling examples (linux)
+
+	cd path/to/neural_network
+	mv examples/ExampleFile.cpp src/main.cpp
+	make
+	./bin/a.out
