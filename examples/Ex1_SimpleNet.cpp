@@ -11,7 +11,7 @@ int main(){
 	vector <double> in{ 0, 2, 3};
 	vector <double> out{ 1, 0, .5, 0};
 	net n1(dims, true);//creates fully connected net with weights initialized to random values in the shape of dims
-	n1.TrainBackpropagation( out, in);
+	n1.TrainBackpropagation( out, in);//run backpropagation once
 
 
 	//using layer by layer syntax:
@@ -21,8 +21,9 @@ int main(){
 	n2.AddNeurons( 5, 1, "layer2");//create 5 neurons in layer at the position [1]
 	n2.FullyConnect( 0, 1);//fully connect the layers at [0] and [1]
 	n2.AddNeurons( 4, 2, "layer3"); //create 4 neurons at layer position [2]
-	n2.FullyConnect( 0, 3);//fully connect layer at [0] to [3] to make the [1] and [2] layers connect to the first
-	n2.TrainBackpropagation( out, in2);
+	n2.FullyConnect( 0, 2);//fully connect layer at [0] to [2] to make the [1] and [2] layers connect to the first
+	n2.AddFullyConnectedNeurons(9,3);
+	n2.TrainBackpropagation( out, in2, 5 );//run backpropagation 5 times
 	
 	return 0;
 }

@@ -11,7 +11,7 @@
 using namespace std;
 
 //
-net::net(){};
+net::net(){cout<<"new net"<<endl;};
 
 
 //constructor for the net class
@@ -19,17 +19,17 @@ net::net(vector <int> &dimensions)
 {
     //creates a number of neurons and layers based on the dimensions
     layers.resize(dimensions.size());
-		cout<<endl<<"size = "<<dimensions.size();
-		for (int i=0; i <dimensions.size(); i++)
-		{
-			for (int j=0; j <dimensions[i]; j++)
-			{
-				layers.at(i).push_back(new neuron);
+        cout<<endl<<"size = "<<dimensions.size();
+        for (int i=0; i <dimensions.size(); i++)
+        {
+            for (int j=0; j <dimensions[i]; j++)
+            {
+                layers.at(i).push_back(new neuron);
 
-				cout<<endl<<"new neuron at "<<i<<","<<j;
+                cout<<endl<<"new neuron at "<<i<<","<<j;
 
-			}
-		}
+            }
+        }
 };
 
 
@@ -39,46 +39,46 @@ net::net(vector <int> &dimensions, bool fullyconnected)
 
     //creates a number of fully connected neurons and layers based on the dimensions
     layers.resize(dimensions.size());
-		cout<<endl<<"size = "<<dimensions.size();
-		for (int i=0; i <dimensions.size(); i++)
-		{
-			for (int j=0; j <dimensions[i]; j++)
-			{
-				layers.at(i).push_back(new neuron);
+        cout<<endl<<"size = "<<dimensions.size();
+        for (int i=0; i <dimensions.size(); i++)
+        {
+            for (int j=0; j <dimensions[i]; j++)
+            {
+                layers.at(i).push_back(new neuron);
 
-				cout<<endl<<"new neuron at "<<i<<","<<j;
-				if (i>=1&&(fullyconnected==true))
-					{
-						for (int k=0; k <layers [i-1].size();k++)
-						{
+                cout<<endl<<"new neuron at "<<i<<","<<j;
+                if (i>=1&&(fullyconnected==true))
+                    {
+                        for (int k=0; k <layers [i-1].size();k++)
+                        {
 
-							layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
-							//cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
+                            layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
+                            //cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
 
-						}
-					}
-			}
-		}
+                        }
+                    }
+            }
+        }
 };
 
 //destructor
 net::~net()
-	{
+    {
         //deletes all neurons and their inweights
-		for(row=layers.begin(); row!=layers.end(); row++)
-		{
+        for(row=layers.begin(); row!=layers.end(); row++)
+        {
 
-			for(col=row->begin(); col !=row->end(); col++)
-			{
-			    cout <<endl<<"deleting neuron: "<<(*col);
-				delete(*col); //deletes the neuron
+            for(col=row->begin(); col !=row->end(); col++)
+            {
+                cout <<endl<<"deleting neuron: "<<(*col);
+                delete(*col); //deletes the neuron
 
-			}
-			row->clear();//clear the row it points too
-		}
-	layers.clear();
+            }
+            row->clear();//clear the row it points too
+        }
+    layers.clear();
 
-	}
+    }
 
 
 //copy constructor for the net class
@@ -127,24 +127,24 @@ net::net(const net& tobecloned)
 
 // overloaded assignment operator for the net class
 net& net::operator=(const net& tobecloned)
-	{
+    {
         int y;
         int x;
 
 
         for(row=layers.begin(); row!=layers.end(); row++)
-		{
+        {
 
-			for(col=row->begin(); col !=row->end(); col++)
-			{
+            for(col=row->begin(); col !=row->end(); col++)
+            {
 
 
-				delete(*col); //deletes the node
-				cout <<endl<<"deleted neuron";
-			}
-			row->clear();//clear the row it points too
-		}
-	layers.clear();
+                delete(*col); //deletes the node
+                cout <<endl<<"deleted neuron";
+            }
+            row->clear();//clear the row it points too
+        }
+    layers.clear();
 
 
         layers.resize(tobecloned.layers.size());
@@ -168,9 +168,9 @@ net& net::operator=(const net& tobecloned)
 
         }
 
-	    return (*this);
+        return (*this);
 
-	}
+    }
 
 
 
@@ -192,21 +192,21 @@ int net::get_size(int i)
 //sets the input to the net
 void net::SetInput(vector<double>& input)
 {
-	for( int i=0; i<layers.at(0).size(); i++)
-	{
+    for( int i=0; i<layers.at(0).size(); i++)
+    {
         layers.at(0).at(i)->_input=(input[i]);
-	};
+    };
 }
 
 void net::UserInput()
 {
     for( int i=0; i<layers.at(0).size(); i++)
-	{
-	    cout<<endl<<"Input value for neuron("<<i<<") ";
-	    double d;
-	    cin>>d;
+    {
+        cout<<endl<<"Input value for neuron("<<i<<") ";
+        double d;
+        cin>>d;
         layers.at(0).at(i)->_input=(d);
-	};
+    };
 }
 
 
@@ -301,10 +301,10 @@ int j=0;
 
 void net::SetDesired(vector<double>& desired)
 {
-	for( int x=0; x<layers.at(layers.size()-1).size(); x++)
-	{
+    for( int x=0; x<layers.at(layers.size()-1).size(); x++)
+    {
         layers.at(layers.size ()-1).at(x)->_desired=(desired[x]);
-	};
+    };
 }
 
 
@@ -315,32 +315,32 @@ void net::FeedForeward(neuron::ActivationType activation_type=neuron::fast_sigmo
 {
 
     vector<thread> threads;
-	for(int i=0; i<layers.size(); i++)
-	{
+    for(int i=0; i<layers.size(); i++)
+    {
 
 
-		for(int j=0; j<layers[i].size(); j++)
-		{
+        for(int j=0; j<layers[i].size(); j++)
+        {
 
-		    threads.push_back(thread([=]{(layers[i][j])->feed(activation_type);}));
-		}
-		for(int k=0; k<threads.size(); k++)
-		{
-		    cout<<endl<<"thread size="<<threads.size();
-		    cout<<endl<<"thread "<<k<<"joined";
-			threads[k].join();
-		}
+            threads.push_back(thread([=]{(layers[i][j])->feed(activation_type);}));
+        }
+        for(int k=0; k<threads.size(); k++)
+        {
+            cout<<"thread size="<<threads.size()<<endl;
+            cout<<"thread "<<k<<" joined"<<endl;
+            threads[k].join();
+        }
 
-		threads.erase(threads.begin(),threads.end());
+        threads.erase(threads.begin(),threads.end());
 
-		if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
+        if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
 
-		for(int l=0; l<layers[i].size(); l++)
-		{
-			(((layers[i][l])->_value)=(layers[i][l])->_buffer);//to avoid accessing and activating a neuron at the same time ( like if a neuron is connected to one in the same layer)
-		}
+        for(int l=0; l<layers[i].size(); l++)
+        {
+            (((layers[i][l])->_value)=(layers[i][l])->_buffer);//to avoid accessing and activating a neuron at the same time ( like if a neuron is connected to one in the same layer)
+        }
 
-	}
+    }
 
 }
 
@@ -351,28 +351,28 @@ void net::FeedForeward( int starting_layer, int ending_layer, neuron::Activation
 {
     vector<thread> threads;
 
-	for(row=(layers.begin()+starting_layer); row!=(layers.begin()+ending_layer+1); row++)
-	{
-		for(col=row->begin(); col !=row->end(); col++)
-		{
-		    threads.push_back(thread([=]{(*col)->feed(activation_type);}));//using this instead to allow overloading feed()
-			//threads.push_back(thread(&neuron::feed,(*col)));
-		}
-		for(int i=0; i<threads.size(); i++)
-		{
-			threads[i].join();
-		}
+    for(row=(layers.begin()+starting_layer); row!=(layers.begin()+ending_layer+1); row++)
+    {
+        for(col=row->begin(); col !=row->end(); col++)
+        {
+            threads.push_back(thread([=]{(*col)->feed(activation_type);}));//using this instead to allow overloading feed()
+            //threads.push_back(thread(&neuron::feed,(*col)));
+        }
+        for(int i=0; i<threads.size(); i++)
+        {
+            threads[i].join();
+        }
 
-		threads.erase(threads.begin(),threads.end());
+        threads.erase(threads.begin(),threads.end());
 
-		if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
+        if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
 
-		for(col=row->begin(); col !=row->end(); col++)
-		{
-			((*col)->_value)=((*col)->_buffer);//to avoid accessing and activating a neuron at the same t[o98ume ( like if a neuron is connected to one in the same layer)
-		}
+        for(col=row->begin(); col !=row->end(); col++)
+        {
+            ((*col)->_value)=((*col)->_buffer);//to avoid accessing and activating a neuron at the same t[o98ume ( like if a neuron is connected to one in the same layer)
+        }
 
-	}
+    }
 
 }
 
@@ -420,30 +420,30 @@ void net::Backpropagate()
 
     vector<thread> threads;
 
-	for(rrow=layers.rbegin(); rrow!=layers.rend(); rrow++)
-	{
-		for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
-		{
-			(*rcol)->_error=(*rcol)->_ebuffer;//to avoid accessing and propagating to a neuron at the same time ( like if a neuron is connected to one in the same layer)
-		}
+    for(rrow=layers.rbegin(); rrow!=layers.rend(); rrow++)
+    {
+        for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
+        {
+            (*rcol)->_error=(*rcol)->_ebuffer;//to avoid accessing and propagating to a neuron at the same time ( like if a neuron is connected to one in the same layer)
+        }
 
-		for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
-		{
-			threads.push_back(thread(&neuron::throwup,(*rcol)));
-		}
+        for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
+        {
+            threads.push_back(thread(&neuron::throwup,(*rcol)));
+        }
 
-		for(int i=0; i<threads.size(); i++)
-		{
-			threads[i].join();
+        for(int i=0; i<threads.size(); i++)
+        {
+            threads[i].join();
 
-		}
-
-
-		threads.erase(threads.begin(),threads.end());//destroys threads in array to leave it empty for next layer
+        }
 
 
-		if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
-	}
+        threads.erase(threads.begin(),threads.end());//destroys threads in array to leave it empty for next layer
+
+
+        if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
+    }
 }
 
 
@@ -454,108 +454,115 @@ void net::TrainBackpropagation(vector<double>& _desired, vector <double>& _input
 
     SetDesired(_desired);   //sets the desired Output of the network for Training
     SetInput(_input);
-	FeedForeward();
-	Backpropagate();
+    FeedForeward();
+    Backpropagate();
 
 }
+
+void net::TrainBackpropagation(vector<double>& _desired, vector <double>& _input, int _iterations){
+    for(int i = 0; i<=_iterations; i++){
+        TrainBackpropagation(_desired, _input);
+    }
+}
+
 
 void net::ContrastDiverge( int starting_layer)
 {
     vector<thread> threads;
 
-	FeedForeward(starting_layer, starting_layer+1);
+    FeedForeward(starting_layer, starting_layer+1);
 
-	for(row=(layers.begin()+starting_layer); row!=(layers.begin()+(starting_layer+2)); row++)
-	{
-		for(col=row->begin(); col !=row->end(); col++)
-		{
-			(*col)->_old_value=(*col)->_value;
+    for(row=(layers.begin()+starting_layer); row!=(layers.begin()+(starting_layer+2)); row++)
+    {
+        for(col=row->begin(); col !=row->end(); col++)
+        {
+            (*col)->_old_value=(*col)->_value;
 
-			(*col)->_value>=.5?(*col)->_value=1:(*col)->_value=0;
-
-
-			for(unsigned int i=0;i<((*col)->inweights.size());i++)
-			{
-				(*col)->inweights[i]->_positive_phase=((*col)->_value)*((*col)->inweights[i]->_origin._value);
-				cout<<endl<<"positive phase ="<<(*col)->inweights[i]->_positive_phase;
-			}
-		}
-
-	}
-
-	for(col=(layers.at(starting_layer+1)).begin(); col !=((layers.at(starting_layer+1)).end()); col++)
-	{
+            (*col)->_value>=.5?(*col)->_value=1:(*col)->_value=0;
 
 
-	(*col)->_value=(*col)->_buffer;
+            for(unsigned int i=0;i<((*col)->inweights.size());i++)
+            {
+                (*col)->inweights[i]->_positive_phase=((*col)->_value)*((*col)->inweights[i]->_origin._value);
+                cout<<endl<<"positive phase ="<<(*col)->inweights[i]->_positive_phase;
+            }
+        }
 
-		threads.push_back(thread(&neuron::reconstruct,(*col)));
+    }
 
-	}
-
-	for(int i=0; i<threads.size(); i++)
-	{
-
-		threads[i].join();
-
-	}
-
-	threads.erase(threads.begin(),threads.end());//destroys threads in array to leave it empty for next layer
-
-	for(col=(layers.at(starting_layer)).begin(); col !=(layers.at(starting_layer)).end(); col++)
-	{
-		(*col)->activate();
-		(*col)->_value=(*col)->_buffer;
-		if(starting_layer==0)
-		{
-				(*col)->_input=(*col)->_value;
-		}
-	}
-
-	FeedForeward(starting_layer, starting_layer+1);
-
-	for(row=(layers.begin()+starting_layer); row!=(layers.begin()+(starting_layer+2)); row++)
-	{
-		for(col=row->begin(); col !=row->end(); col++)
-		{
-
-			(*col)->_bias+=((*col)->_old_value)-((*col)->_value);
-		// get bias before value is changed
-			(*col)->_value>=.5?(*col)->_value=1:(*col)->_value=0;
+    for(col=(layers.at(starting_layer+1)).begin(); col !=((layers.at(starting_layer+1)).end()); col++)
+    {
 
 
-			for(unsigned int i=0;i<((*col)->inweights.size());i++)
-			{
+    (*col)->_value=(*col)->_buffer;
 
-				(*col)->inweights[i]->_negative_phase=((*col)->_value)*((*col)->inweights[i]->_origin._input);
-				(*col)->inweights[i]->_weight+=(*col)->learning_rate*(((*col)->inweights[i]->_positive_phase)-((*col)->inweights[i]->_negative_phase));
-				cout<<endl<< "negative phase ="<<(*col)->inweights[i]->_negative_phase;
-				cout<<endl<<"new weight ="<<(*col)->inweights[i]->_weight;
-			}
-		}
+        threads.push_back(thread(&neuron::reconstruct,(*col)));
 
-	}
+    }
+
+    for(int i=0; i<threads.size(); i++)
+    {
+
+        threads[i].join();
+
+    }
+
+    threads.erase(threads.begin(),threads.end());//destroys threads in array to leave it empty for next layer
+
+    for(col=(layers.at(starting_layer)).begin(); col !=(layers.at(starting_layer)).end(); col++)
+    {
+        (*col)->activate();
+        (*col)->_value=(*col)->_buffer;
+        if(starting_layer==0)
+        {
+                (*col)->_input=(*col)->_value;
+        }
+    }
+
+    FeedForeward(starting_layer, starting_layer+1);
+
+    for(row=(layers.begin()+starting_layer); row!=(layers.begin()+(starting_layer+2)); row++)
+    {
+        for(col=row->begin(); col !=row->end(); col++)
+        {
+
+            (*col)->_bias+=((*col)->_old_value)-((*col)->_value);
+        // get bias before value is changed
+            (*col)->_value>=.5?(*col)->_value=1:(*col)->_value=0;
+
+
+            for(unsigned int i=0;i<((*col)->inweights.size());i++)
+            {
+
+                (*col)->inweights[i]->_negative_phase=((*col)->_value)*((*col)->inweights[i]->_origin._input);
+                (*col)->inweights[i]->_weight+=(*col)->learning_rate*(((*col)->inweights[i]->_positive_phase)-((*col)->inweights[i]->_negative_phase));
+                cout<<endl<< "negative phase ="<<(*col)->inweights[i]->_negative_phase;
+                cout<<endl<<"new weight ="<<(*col)->inweights[i]->_weight;
+            }
+        }
+
+    }
 }
 
 
 void net::Output()
 {
-	int i=0;
-	for(rrow=layers.rbegin(); rrow!=layers.rend(); rrow++)
-	{
-		for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
-		{
-			cout<<endl<<"neuron"<<i<<"="<<(*rcol)->_value;
-			i++;
-		}
+    int i=0;
+    for(rrow=layers.rbegin(); rrow!=layers.rend(); rrow++)
+    {
+        for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
+        {
+            cout<<endl<<"neuron"<<i<<"="<<(*rcol)->_value;
+            i++;
+        }
 
-	}
+    }
 }
 
 
 double net::Output(int row, int column=0)
 {
-	return layers[row][column]->_value;
+    return layers[row][column]->_value;
 }
 
 
@@ -563,31 +570,31 @@ double net::Output(int row, int column=0)
 void net::TrainRestrictedBoltzman(int starting_layer)
 {
         vector<thread> threads;
-		FeedForeward(starting_layer, starting_layer+1);
+        FeedForeward(starting_layer, starting_layer+1);
 
-		for(col=(layers.at(starting_layer+1)).begin(); col !=((layers.at(starting_layer+1)).end()); col++)
-	{
-		threads.push_back(thread(&neuron::reconstruct,(*col)));
-	}
+        for(col=(layers.at(starting_layer+1)).begin(); col !=((layers.at(starting_layer+1)).end()); col++)
+    {
+        threads.push_back(thread(&neuron::reconstruct,(*col)));
+    }
 
-	for(int i=0; i<threads.size(); i++)
-	{
-		threads[i].join();
+    for(int i=0; i<threads.size(); i++)
+    {
+        threads[i].join();
 
-	}
+    }
 
-	threads.erase(threads.begin(),threads.end());//destroys threads in array to leave it empty for next layer
+    threads.erase(threads.begin(),threads.end());//destroys threads in array to leave it empty for next layer
 
- int i=0;	for(col=(layers.at(starting_layer)).begin(); col !=(layers.at(starting_layer)).end(); col++)
-	{
-		i++;
-		(*col)->activate();
-		(*col)->_value=(*col)->_buffer;
-		cout<<endl<<"neuron "<<i<<"="<<(*col)->_value;
+ int i=0;   for(col=(layers.at(starting_layer)).begin(); col !=(layers.at(starting_layer)).end(); col++)
+    {
+        i++;
+        (*col)->activate();
+        (*col)->_value=(*col)->_buffer;
+        cout<<endl<<"neuron "<<i<<"="<<(*col)->_value;
 
 
 
-	}
+    }
 
 
 }
@@ -702,7 +709,7 @@ void net::AddNeurons(int amount, int layer, string identifying_tag)
     {
         vector <neuron*> l;
         layers.push_back(l);
-        cout<<"layers size:"<<layers.size()<<endl;
+        cout<<"layers size: "<<layers.size()<<endl;
     }
 
     if(groups.size()<layers.size())groups.resize(layers.size());//
@@ -721,34 +728,43 @@ void net::AddNeurons(int amount, int layer, string identifying_tag)
 
 void net::AddFullyConnectedNeurons(int amount, int layer)
 {
-	int original=layers.at(layer).size();
+    if(layers.size()-1<layer){
+        if(layers.size()-1<layer-1){cerr<<"ERROR: position of new layer is not within last layer position + 1";
+        return;
+    }
+            else{layers.resize(layer+1);}
+                
+        
+    }
 
-	for(int i=0; i<amount; i++)
-	{
-		layers.at(layer).push_back(new neuron);
+    int original=layers.at(layer).size();
+
+    for(int i=0; i<amount; i++)
+    {
+        layers.at(layer).push_back(new neuron);
 
 
-		if (layer>0)
-		{
-		for (int j=0; j <layers [layer-1].size();j++)
-		{
+        if (layer>0)
+        {
+        for (int j=0; j <layers [layer-1].size();j++)
+        {
 
-				layers[layer][original+i]->inweights.push_back (new link(*(layers [layer-1][j])));
-				//cout<<"new link from "<<(layer-1)<<","<<j<<" to "<<layer<<","<<original+i<<endl;
+                layers[layer][original+i]->inweights.push_back (new link(*(layers [layer-1][j])));
+                //cout<<"new link from "<<(layer-1)<<","<<j<<" to "<<layer<<","<<original+i<<endl;
 
-		}
-		}
+        }
+        }
 
-		if (layer<layers.size ()-1)
-		{
-		for (int k=0; k <layers [layer+1].size();k++)
-		{
-			layers[layer+1][k]->inweights.push_back (new link(*(layers [layer][original+i])));
-			//cout<<"new link from "<<(layer)<<","<<original+i<<" to "<<layer+1<<","<<k<<endl;
-		}
+        if (layer<layers.size ()-1)
+        {
+        for (int k=0; k <layers [layer+1].size();k++)
+        {
+            layers[layer+1][k]->inweights.push_back (new link(*(layers [layer][original+i])));
+            //cout<<"new link from "<<(layer)<<","<<original+i<<" to "<<layer+1<<","<<k<<endl;
+        }
 
-	}
-	}
+    }
+    }
 
 }
 
@@ -789,22 +805,22 @@ void net::FullyConnectNets(net* net_from, net* net_to, int layer_from, int layer
 void net::FullyConnect()
 {
     for (int i=0; i <layers.size(); i++)
-		{
-			for (int j=0; j <layers[i].size(); j++)
-			{
+        {
+            for (int j=0; j <layers[i].size(); j++)
+            {
 
-				if (i>=1)
-					{
-						for (int k=0; k <layers [i-1].size();k++)
-						{
+                if (i>=1)
+                    {
+                        for (int k=0; k <layers [i-1].size();k++)
+                        {
 
-							layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
-							//cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
+                            layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
+                            //cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
 
-						}
-					}
-			}
-		}
+                        }
+                    }
+            }
+        }
 
 }
 
@@ -826,23 +842,23 @@ void net::FullyConnect(int layer_from, int layer_to)
     }else{
 
         for (int i=layer_from; i <=layer_to && i<layers.size(); i++)
-		{
+        {
 
-			for (int j=0; j <layers[i].size(); j++)
-			{
+            for (int j=0; j <layers[i].size(); j++)
+            {
 
-				if (i>=layer_from+1)
-					{
-						for (int k=0; k <layers [i-1].size();k++)
-						{
+                if (i>=layer_from+1)
+                    {
+                        for (int k=0; k <layers [i-1].size();k++)
+                        {
 
-							layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
-							//cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
+                            layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
+                            //cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
 
-						}
-					}
-			}
-		}
+                        }
+                    }
+            }
+        }
     }
 
 
