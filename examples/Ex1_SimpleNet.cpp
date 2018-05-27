@@ -22,7 +22,7 @@ int main(){
 	n2.FullyConnect( 0, 1);//fully connect the layers at [0] and [1]
 	n2.AddNeurons( 4, 2, "layer3"); //create 4 neurons at layer position [2]
 	n2.FullyConnect( 0, 2);//fully connect layer at [0] to [2] to make the [1] and [2] layers connect to the first
-	n2.AddFullyConnectedNeurons(9,3);
+	n2.AddFullyConnectedNeurons(9,3);//add a fully connected layer with 9 neurons as the last layer
 	n2.TrainBackpropagation( out, in2, 5 );//run backpropagation 5 times
 	
 	return 0;
