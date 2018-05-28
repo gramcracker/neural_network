@@ -70,7 +70,6 @@ net::~net()
 
             for(col=row->begin(); col !=row->end(); col++)
             {
-                cout <<endl<<"deleting neuron: "<<(*col);
                 delete(*col); //deletes the neuron
 
             }
@@ -95,7 +94,6 @@ net::net(const net& tobecloned)
         {
 
             delete(*col); //deletes the node
-            cout <<endl<<"deleted neuron";
         }
         row->clear();//clear the row it points too
     }
@@ -140,7 +138,6 @@ net& net::operator=(const net& tobecloned)
 
 
                 delete(*col); //deletes the node
-                cout <<endl<<"deleted neuron";
             }
             row->clear();//clear the row it points too
         }
@@ -326,8 +323,7 @@ void net::FeedForeward(neuron::ActivationType activation_type=neuron::fast_sigmo
         }
         for(int k=0; k<threads.size(); k++)
         {
-            cout<<"thread size="<<threads.size()<<endl;
-            cout<<"thread "<<k<<" joined"<<endl;
+        
             threads[k].join();
         }
 
