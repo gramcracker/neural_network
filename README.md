@@ -1,6 +1,7 @@
 # neural_network
 This is my personal project to make a realatively simple neural network framework in C++.
-I created it specifically for experimentation with natural language processing in mind, but works for just about anything, although it is still a work in progress.
+I created it specifically for experimentation with real time natural language processing 
+and sementic analysis, although it is still a work in progress.
 
 I created this because I needed a framework that could be configured in complex and irregular ways for easy experimentation. It had have the following features:
 
@@ -11,6 +12,7 @@ I created this because I needed a framework that could be configured in complex 
 * realtime input and output.
 * loading/saving of weight values and structure to file.
 * activation of specific neurons at defines times realative to the network.
+* focus on learning strategies for natural lamguage processing and semantic analysis.
 
 As stated above, this is still a work in progress, and I have yet to implement all of these features.
 
