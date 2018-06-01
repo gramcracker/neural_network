@@ -783,7 +783,7 @@ void net:: Connect(int layer_from, int column_from, int layer_to, int column_to,
 
 
 
-void net::FullyConnectNets(net* net_from, net* net_to, int layer_from, int layer_to)
+void net::FullyConnectNets(net* net_from, net* net_to, int layer_from, int layer_to, bool new_net)
 {
     for(int i=0; i<net_to->layers.at(layer_to).size(); i++)
     {
@@ -791,6 +791,19 @@ void net::FullyConnectNets(net* net_from, net* net_to, int layer_from, int layer
         {
             net_to->layers.at(layer_to).at(i)->inweights.push_back(new link(*net_from->layers.at(layer_from).at(j)));
         }
+
+    }
+
+    if(new_net)
+    {
+       net n1();
+        for(int i=0; i<net_from->layers.size(); i++){
+            n1.layers[i].push_back(net_from->layers[i]);
+        }
+        for(int i=0; i<net_to->layers.size(); i++){
+            n1.layers[i].push_back(net_to->layers[i]);
+        }
+
 
     }
 
