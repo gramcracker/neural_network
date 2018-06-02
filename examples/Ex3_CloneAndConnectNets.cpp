@@ -26,16 +26,18 @@ int main(){
 	//net n2(n1);//also clones n1
 	int n1LayerFrom = n1.get_size()-1;
 	int n2LayerTo = 0;
-	n2.FullyConnectNets(&n1, &n2, n1LayerFrom, n2LayerTo);
+	bool makeNewNet = true;
+	n1.FullyConnectToNet(&n2, n1LayerFrom, n2LayerTo);
+	net n3;
+	n3.AppendNet(&n1,false);
+	n3.AppendNet(&n2,false);
 
-	cout<<"n1:"<<endl;
-	for (int i= 0; i<n1.get_size(); i++){
-		cout<<"layer "<<i<<" = "<<n1.get_size(i)<<endl;
+	cout<<"n3:"<<endl;
+	for (int i= 0; i<n3->get_size(); i++){
+		cout<<"layer "<<i<<" = "<<n3->get_size(i)<<endl;
 	}
 	
 	
-	
-
 	
 	return 0;
 }

@@ -79,7 +79,8 @@ public:
     net(const net& tobecloned);
     net& operator=(const net& tobecloned);
     friend net* clone(net& tobecloned);//
-
+    net& operator+(const net toConnect);
+    friend net* connectToNet();
 
 
   vector<neuron*>::iterator col;
@@ -144,8 +145,10 @@ public:
   void AddNeurons(int amount, int layer);   //adds neurons to a layer
   void AddNeurons(int amount, int layer, string identifying_tag);
   void AddFullyConnectedNeurons(int amount, int layer); //adds neurons to specified layer and fully conects them to the network
+  net* AppendNet(net* net_from, bool pasteOver);
   void Connect(int layer_from, int column_from, int layer_to, int column_to); //adds a link from a neuron to a neuron(in the order in will be Trained)
   void Connect(int layer_from, int column_from, int layer_to, int column_to, float weight);
+  void ConnectToNet();
   void SingleConnect();
   void SingleConnect(int layer_from, int layer_to);
   void SingleConnect( string identifying_tag_1, string Identifying_tag_2);
@@ -158,7 +161,7 @@ public:
   void FullyConnect();  //fully connects all layers in the net(does not clear out previous links)
   void FullyConnect(int layer_from, int layer_to);  //fully connects a specific portion of the network
   void FullyConnect(int layer_from, int lfstart, int lfend, int layer_to, int ltstart, int ltend);
-  void FullyConnectNets(net* net_from, net* net_to, int layer_from, int layer_to);   //fully connects a specific layer of a net to a specific layer in a seperate net
+  void FullyConnectToNet( net* net_to, int layer_from, int layer_to);   //fully connects a specific layer of a net to a specific layer in a seperate net
   void CleanAfterBuild();//cleans up excess memory used for building network
   int get_size();// returns size of the net
   int get_size(int i);  //returns the size of the layer

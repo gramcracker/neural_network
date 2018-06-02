@@ -783,31 +783,32 @@ void net:: Connect(int layer_from, int column_from, int layer_to, int column_to,
 
 
 
-void net::FullyConnectNets(net* net_from, net* net_to, int layer_from, int layer_to, bool new_net)
+void net::FullyConnectToNet( net* net_to, int layer_from, int layer_to)
 {
     for(int i=0; i<net_to->layers.at(layer_to).size(); i++)
     {
-        for(int j= 0; j<net_from->layers.at(layer_from).size();j++)
+        for(int j= 0; j<this->layers.at(layer_from).size();j++)
         {
-            net_to->layers.at(layer_to).at(i)->inweights.push_back(new link(*net_from->layers.at(layer_from).at(j)));
+            net_to->layers.at(layer_to).at(i)->inweights.push_back(new link(*this->layers.at(layer_from).at(j)));
         }
 
     }
 
-    if(new_net)
-    {
-       net n1();
-        for(int i=0; i<net_from->layers.size(); i++){
-            n1.layers[i].push_back(net_from->layers[i]);
-        }
-        for(int i=0; i<net_to->layers.size(); i++){
-            n1.layers[i].push_back(net_to->layers[i]);
-        }
+}
 
+net* net::AppendNet(net* net_from, bool pasteOver)
+{
+    if(pasteOver){
+            vector<vector<neuron*>> l = net_from->layers; 
+            this->layers.resize(0);
+            this->layers.insert(this->layers.end(), l.begin(), l.end());
 
+    }else{
+        this->layers.insert(this->layers.end(), net_from->layers.begin(), net_from->layers.end());
     }
+    
 
-
+    return this;
 }
 
 
