@@ -11,11 +11,11 @@ int main(){
 	vector <double> in{ 0, 2, 3};
 	vector <double> out{ 1, 0, .5, 0};
 	net n1(dims, true);//creates fully connected net with weights initialized to random values in the shape of dims
-	n1.TrainBackpropagation( out, in);//run backpropagation once
 	cout<<"n1:"<<endl;
 	for (int i= 0; i<n1.get_size(); i++){
 		cout<<"layer "<<i<<" = "<<n1.get_size(i)<<endl;
 	}
+
 
 	net n2 = n1;
 	cout<<"n2:"<<endl;
@@ -33,10 +33,17 @@ int main(){
 	n3.AppendNet(&n2,false);
 
 	cout<<"n3:"<<endl;
-	for (int i= 0; i<n3->get_size(); i++){
-		cout<<"layer "<<i<<" = "<<n3->get_size(i)<<endl;
+	for (int i= 0; i<n3.get_size(); i++){
+		cout<<"layer "<<i<<" = "<<n3.get_size(i)<<endl;
 	}
-	
+
+	n3.TrainBackpropagation(out,in);
+	cout<<endl<<"n1 output = ";
+	n1.Output();
+	cout<<endl<<"n2 output = ";
+	n2.Output();
+	cout<<endl<<"n3 output = ";
+	n3.Output();
 	
 	
 	return 0;

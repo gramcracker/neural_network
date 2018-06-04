@@ -39,8 +39,6 @@ public:
         int col;
         bool isnetfunc=false;
 
-
-
         union
         {
             //pointer to function to run
@@ -92,6 +90,7 @@ public:
   vector<double> input;
   typedef vector <string> group;
   vector<group>groups;
+  bool netPointersCopied=false;
   //vector<thread> threads;
 
 

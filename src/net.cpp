@@ -64,6 +64,10 @@ net::net(vector <int> &dimensions, bool fullyconnected)
 //destructor
 net::~net()
     {
+        if(this->netPointersCopied){
+            cout <<endl<<"netPointersCopied";
+            return;
+        }
         //deletes all neurons and their inweights
         for(row=layers.begin(); row!=layers.end(); row++)
         {
@@ -803,11 +807,12 @@ net* net::AppendNet(net* net_from, bool pasteOver)
             this->layers.resize(0);
             this->layers.insert(this->layers.end(), l.begin(), l.end());
 
+
     }else{
         this->layers.insert(this->layers.end(), net_from->layers.begin(), net_from->layers.end());
     }
     
-
+    net_from->netPointersCopied = true;
     return this;
 }
 
