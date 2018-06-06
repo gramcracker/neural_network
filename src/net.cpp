@@ -10,11 +10,17 @@
 
 using namespace std;
 
-//
+/**
+ * @brief      Constructs the net object.
+ */
 net::net(){cout<<"new net"<<endl;};
 
 
-//constructor for the net class
+/**
+ * @brief      Constructs the net object.
+ *
+ * @param      dimensions  The dimensions of the network where the input layer is dimensions[0] and the output is dimensions.back()
+ */
 net::net(vector <int> &dimensions)
 {
     //creates a number of neurons and layers based on the dimensions
@@ -33,7 +39,12 @@ net::net(vector <int> &dimensions)
 };
 
 
-//constructor for fully connected
+/**
+ * @brief      Constructs the net object.
+ *
+ * @param      dimensions The dimensions of the network where the input layer is dimensions[0] and the output is dimensions.back()     
+ * @param[in]  fullyconnected  fullyconnected = true creates complete connections between each layer 
+ */
 net::net(vector <int> &dimensions, bool fullyconnected)
 {
 
@@ -61,7 +72,9 @@ net::net(vector <int> &dimensions, bool fullyconnected)
         }
 };
 
-//destructor
+/**
+ * @brief      Destroys the net along with all of its pointers to neuron objects.
+ */
 net::~net()
     {
         if(this->netPointersCopied){
@@ -84,7 +97,11 @@ net::~net()
     }
 
 
-//copy constructor for the net class
+/**
+ * @brief      Constructs the object.
+ *
+ * @param[in]  tobecloned  The tobecloned
+ */
 net::net(const net& tobecloned)
 {
 
