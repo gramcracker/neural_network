@@ -3,6 +3,10 @@
 #include "file_manager.h"
 using namespace std;
 int main(){
+	/*
+	 *This example demonstrates how to save and
+	 *a network.
+	*/
 
 	ofstream outputFile("weights");
 	ifstream inputFile("weights");

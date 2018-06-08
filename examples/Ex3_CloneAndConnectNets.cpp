@@ -2,7 +2,7 @@
 #include "net.h"
 using namespace std;
 int main(){
-	/*this example shows how to create simple network from two or more pre-existing 
+	/*This example shows how to create simple network from two or more pre-existing 
 	networks in a copy/paste fashion by using the "=" operator , and the methods 
 	FullyConnectToNet and AppendNet
 	*/
