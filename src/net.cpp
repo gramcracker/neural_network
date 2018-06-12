@@ -804,7 +804,7 @@ void net:: Connect(int layer_from, int column_from, int layer_to, int column_to,
 
 
 
-void net::FullyConnectToNet( net* net_to, int layer_from, int layer_to)
+void net::FullyConnect( net* net_to, int layer_from, int layer_to)
 {
     for(int i=0; i<net_to->layers.at(layer_to).size(); i++)
     {

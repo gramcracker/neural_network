@@ -37,7 +37,7 @@ int main(){
 	e.g. n1.FeedForeward then n2.FeedForeward would pass data in the same way
 	that one continuous net would
 	*/
-	n1.FullyConnectToNet(&n2, n1LayerFrom, n2LayerTo);
+	n1.FullyConnect(&n2, n1LayerFrom, n2LayerTo);
 
 
 	net n3;

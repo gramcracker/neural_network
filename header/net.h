@@ -160,7 +160,7 @@ public:
   void FullyConnect();  //fully connects all layers in the net(does not clear out previous links)
   void FullyConnect(int layer_from, int layer_to);  //fully connects a specific portion of the network
   void FullyConnect(int layer_from, int lfstart, int lfend, int layer_to, int ltstart, int ltend);
-  void FullyConnectToNet( net* net_to, int layer_from, int layer_to);   //fully connects a specific layer of a net to a specific layer in a seperate net
+  void FullyConnect( net* net_to, int layer_from, int layer_to);   //fully connects a specific layer of a net to a specific layer in a seperate net
   void CleanAfterBuild();//cleans up excess memory used for building network
   int get_size();// returns size of the net
   int get_size(int i);  //returns the size of the layer
