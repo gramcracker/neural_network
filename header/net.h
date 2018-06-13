@@ -110,8 +110,8 @@ public:
  // void AddToSequence(int iteration, int layer, void(neuron::*func)());
 
   void RunSequence();
-  void Save(ofstream& file, bool save_neuron_values =false);
-  void Open(ifstream& file);
+  ofstream& Save(ofstream& file, bool save_neuron_values =false);
+  ifstream& Open(ifstream& file);
   void SetDesired(vector<double>& desired);   //sets the desired Output of the network for Training
   void SetInput(vector <double>& input);   //sets the input of the network
   void UserInput();

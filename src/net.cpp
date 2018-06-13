@@ -144,7 +144,14 @@ net::net(const net& tobecloned)
 }
 
 
-// overloaded assignment operator for the net class
+
+/**
+ * @brief      { reshapes a net to have the same shape as the net passed in }
+ *
+ * @param[in]  tobecloned  The net with the shape to be copied
+ *
+ * @return     { *this }
+ */
 net& net::operator=(const net& tobecloned)
     {
         int y;
@@ -193,21 +200,34 @@ net& net::operator=(const net& tobecloned)
 
 
 
-//return the amount of layers
+/**
+ * @brief      Gets the size.
+ *
+ * @return     The size.
+ */
 int net::get_size()
 {
     return layers.size();
 }
 
-//returns the amount of neurons in a specific layer
+/**
+ * @brief      Gets the size of a specific layer.
+ *
+ * @param[in]  i     { layer number }
+ *
+ * @return     The size/amount of neurons in layer.
+ */
 int net::get_size(int i)
 {
 
     return layers[i].size();
 }
 
-
-//sets the input to the net
+/**
+ * @brief      Sets the input layer from data stored in a vector.
+ *
+ * @param      input  The input data
+ */
 void net::SetInput(vector<double>& input)
 {
     for( int i=0; i<layers.at(0).size(); i++)
@@ -216,19 +236,15 @@ void net::SetInput(vector<double>& input)
     };
 }
 
-void net::UserInput()
-{
-    for( int i=0; i<layers.at(0).size(); i++)
-    {
-        cout<<endl<<"Input value for neuron("<<i<<") ";
-        double d;
-        cin>>d;
-        layers.at(0).at(i)->_input=(d);
-    };
-}
-
-
-//adds functions from the neuron class to the Sequence to be run
+/**
+ * @brief      Adds functions from the neuron class to the Sequence to be run.
+ *
+ * @param[in]  iteration  The iteration in Sequence that triggers this function
+ * @param[in]  layer      The layer  with the neurons that the function will will be called from
+ * @param[in]  first      The first neuron in the part of the layer that the function will be called from
+ * @param[in]  last       The last neuron in the part of the layer that the function will be called from
+ * @param[in]  <unnamed>  { parameter_description }
+ */
 void net::AddToSequence(int iteration, int layer, int first, int last, void(neuron::*func)())
 {
 
@@ -278,7 +294,9 @@ void net::AddToSequence(int iteration, int layer, int first, int last, void(neur
 
 
 
-
+/**
+ * @brief      { Runs the sequence that operates the network }
+ */
 void net:: RunSequence()
 {
     vector<thread>threads;
@@ -317,6 +335,11 @@ void net:: RunSequence()
 
 int j=0;
 
+/**
+ * @brief      Sets the desired output for the network.
+ *
+ * @param      desired  The desired output for the network
+ */
 void net::SetDesired(vector<double>& desired)
 {
     for( int x=0; x<layers.at(layers.size()-1).size(); x++)
@@ -1182,9 +1205,12 @@ void net::SingleConnectFromRows(int layer_from, int layer_to)
 
 
 
-void net::Save(ofstream& file, bool save_neuron_values)
+ofstream& net::Save(ofstream& file, bool save_neuron_values)
 {
-    if(!file.is_open())cout<<"File could not be opened. "<<endl;
+    if(!file.is_open()){
+        cout<<"File could not be opened. "<<endl;
+        return file;
+    }
 
     int link_count=0;
     vector <tuple<int,int,int,double>> linkdata;
@@ -1216,8 +1242,8 @@ void net::Save(ofstream& file, bool save_neuron_values)
             }
 
         }
-
     }
+
     file<<link_count<<" ";
  ////second loop is to connect all neurons(we can get coordinates of neurons now)////
     for (int i=0; i<layers.size(); i++)
@@ -1237,16 +1263,17 @@ void net::Save(ofstream& file, bool save_neuron_values)
         }
     }
     file.close();
+    return file;
 }
 
 
-void net::Open(ifstream& file)
+ifstream& net::Open(ifstream& file)
 {
 
     if(!file.is_open())
     {
         cout<<"Network file could not be opened."<<endl;
-        return;
+        return file;
     }
     else{cout<<"Now writing network to file."<<endl;}
 
@@ -1308,6 +1335,7 @@ void net::Open(ifstream& file)
 
     }
     file.close();
+    return file;
 }
 
 
