@@ -16,10 +16,10 @@ class link
   public:
   link(neuron& in): _origin(in)//cant have a weight floating around without an input neuron
   {
-      SetRandWeight();
+
   }
 
-  link(neuron& in, float weight): _origin(in),_weight(weight)//overloaded constructor
+  link(neuron& in, double weight): _origin(in),_weight(weight)//overloaded constructor
   {
 
   }
@@ -27,10 +27,7 @@ class link
 
   neuron& _origin;// the neuron this link is getting values from
 
-
-  void SetRandWeight();/**< sets a random weight to the object */
-  void SetRandWeight(double lower, double upper);
-  void SetWeight(int x);/**< sets a specified weight to the object */
+  void SetWeight(double x);/**< sets a specified weight to the object */
 
   friend class net;
   friend class neuron;

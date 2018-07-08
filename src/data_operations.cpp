@@ -2,15 +2,23 @@
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <random>
 using namespace std;
 
+//todo: work on this
+double data_operations::random_number_generator::generate(){
+    mt19937 gen((random_device())());
+    uniform_real_distribution<> dis(-1.0, 1.0);
+    return dis(gen);
+    }
 
-double random_data()
+//todo:make these use random number generator
+double data_operations::random_data()
 {
     return (double)rand()/(double)RAND_MAX;
 }
 
-void make_random(vector<vector<double>>& data)
+void data_operations::make_random(vector<vector<double>>& data)
 {
     for(vector<vector<double>>::iterator row=data.begin(); row!=data.end(); row++)
     {
@@ -21,7 +29,7 @@ void make_random(vector<vector<double>>& data)
     }
 }
 
-void make_random(vector<double>& data)
+void data_operations::make_random(vector<double>& data)
 {
     for(int i=0; i<data.size(); i++)
     {
@@ -32,17 +40,17 @@ void make_random(vector<double>& data)
 
 
 
-void make_binary(double limit, double data)
+void data_operations::make_binary(double limit, double data)
     {
         data>=limit?data=1:data=0;
     }
 
-void hopfield_data(double data)
+void data_operations::hopfield_data(double data)
     {
         data<=0?data=(-1):data=1;
     }
 
-void maxpool(vector<vector<double>>& data, vector<vector<double>>& target, int windowx=1, int windowy=1)
+void data_operations::maxpool(vector<vector<double>>& data, vector<vector<double>>& target, int windowx=1, int windowy=1)
     {
 
         int kmax=windowx*windowy;
@@ -138,7 +146,3 @@ void maxpool(vector<vector<double>>& data, vector<vector<double>>& target, int w
 
     }
 
-void maxpool(vector<double> data, int windowx)
-    {
-
-    }

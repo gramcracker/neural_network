@@ -3,6 +3,7 @@
 
 #include "neuron.h"
 #include "link.h"
+#include "data_operations.h"
 #include <thread>
 #include <fstream>
 #include <vector>
@@ -11,13 +12,13 @@
 #include <functional>
 
 
-
-
 using namespace std;
 
 class net //represents a the vector of vectors of neurons
 {
 public:
+
+  data_operations::random_number_generator rand_generator;
 
     struct Operation
     {
@@ -71,8 +72,7 @@ public:
 
     neuron::LearningType Learning_Type= neuron::backpropagation;
     net();
-    net(vector <int> &dimensions);
-    net(vector <int> &dimensions, bool fullyconnected);
+    net(vector <int> &dimensions, bool fully_connected = false);
     ~net();
     net(const net& tobecloned);
     net& operator=(const net& tobecloned);
@@ -129,9 +129,10 @@ public:
   void RandomizeWeights();
   //void evopatch();   // controls the network structure
   //void neuralprune();   //deletes unused neurons and respectful links based on how frequently they hold a value
-  void FeedForeward(neuron::ActivationType activation_type); //feeds the input through the network one layer at a time
-  void FeedForeward(int starting_layer, int ending_layer, neuron::ActivationType activation_type);
-  void FeedForeward( int starting_layer, int ending_layer, int first_neuron, int last_neuron, neuron::ActivationType activation_type);
+  void FeedForeward(neuron::ActivationType activation_type = neuron::fast_sigmoid ); //feeds the input through the network one layer at a time
+  void FeedForeward(int starting_layer, int ending_layer, neuron::ActivationType activation_type = neuron::fast_sigmoid);
+  void FeedForeward( int starting_layer, int ending_layer, int first_neuron, int last_neuron, neuron::ActivationType activation_type = neuron::fast_sigmoid);
+  void FeedForeward(vector<double> &input);
   void Backpropagate();   // backpropagates the error through the network one layer at a time
   void TrainBackpropagation(vector<double>& _desired, vector <double>& _input);
   void TrainBackpropagation(vector<double>& _desired, vector <double>& _input, int _iterations);
@@ -141,12 +142,12 @@ public:
   void TrainRestrictedBoltzman(int starting_layer);  //performs the restricted boltzmann machine algorithm between the layer selected and the next layer
   void OutputToVector(vector<vector<double>>& dataout); //outputs the values of the last layer to a specified vector of vectors
   void OutputToVector(vector<double>& dataout); //outputs the values of the last layer to a specified vector
-  void AddNeurons(int amount, int layer);   //adds neurons to a layer
-  void AddNeurons(int amount, int layer, string identifying_tag);
-  void AddFullyConnectedNeurons(int amount, int layer); //adds neurons to specified layer and fully conects them to the network
+  void AddNeurons(int amount, int layer, string identifying_tag = "");
+  void AddNeurons(vector<int> &dimensions, string identifying_tag = "");
+  void AddFullyConnectedNeurons(int amount, int layer = 0); //adds neurons to specified layer and fully conects them to the network
   net* AppendNet(net* net_from, bool pasteOver);
-  void Connect(int layer_from, int column_from, int layer_to, int column_to); //adds a link from a neuron to a neuron(in the order in will be Trained)
   void Connect(int layer_from, int column_from, int layer_to, int column_to, float weight);
+  void Connect(int layer_from, int column_from, int layer_to, int column_to);
   void ConnectToNet();
   void SingleConnect();
   void SingleConnect(int layer_from, int layer_to);
