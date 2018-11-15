@@ -13,12 +13,14 @@ using namespace std;
  */
 neuron::~neuron()
 {
+    //cout<<"deleting: "<<this<<endl;
     int j=0;
         for (  vector <link*>::iterator i=inweights.begin (); i !=inweights.end(); i++)
         {
             delete (*i);
         }
         inweights.clear ();
+
 }
 
 
@@ -29,7 +31,7 @@ neuron::~neuron()
  */
 void neuron::setin(double input)
 {
-    _input=input;   // function for setting input
+    _buffer=input;   // function for setting input
 }
 
 
@@ -41,6 +43,7 @@ void neuron::setin(double input)
  */
 void neuron::activate(ActivationType activationtype)// activation function using a specific Activation type
 {
+    _buffer+=_bias;
     switch(activationtype){
     case none:
         break;
@@ -63,16 +66,10 @@ void neuron::activate(ActivationType activationtype)// activation function using
         if (_buffer<=-activation_limit) _buffer=0;
     else if (_buffer>=activation_limit) _buffer=1;
     else _buffer=logistic[(int)(_buffer*10+50)];
-        break;
-
-/*  case gaussian:
-        _buffer=
-        break;
-*/
-
+        break;   
     }
-
-    information.insert(_buffer);
+    _value = _buffer;
+    //information.insert(_buffer);
 
 }
 
@@ -107,10 +104,67 @@ void neuron::set_bias(double bias)
   }
 
 
+
+/**
+ * @brief      Sets the weights.
+ *
+ * @param[in]  val   The value
+ */
+void neuron::set_weights(double val)
+{
+    for(int i=0; i<inweights.size();i++)
+    {
+        inweights[i]->_weight=val;
+    }
+}
+
+
+/**
+ * @brief      retrieves and adds the values from preceding linked neurons then activates this neuron.
+ *
+ * @param[in]  activationtype  The activationtype
+ */
+// void neuron::feed(ActivationType activationtype)// feed forward a single neuron
+// {
+//     if(inweights.size()==0)
+//     {
+//         _buffer=_input;
+//     }
+//     else
+//     {
+//         for(unsigned int i=0; i<inweights.size(); i++)
+//         {
+//             _buffer+=((inweights[i]->_weight)*(inweights[i]->_origin._value))+_bias;
+//         }
+
+
+//         _buffer+=_input;
+//         activate(activationtype);
+
+//     }
+// }
+
+// void neuron::reconstruct(ActivationType activationtype)
+// {
+//     if(inweights.size()==0)
+//     {
+//         _buffer=_input;
+//     }
+//     else
+//     {
+//         for(unsigned int i=0; i<inweights.size(); i++)
+//         {
+//             _buffer+=((inweights[i]->_weight)*(inweights[i]->_origin._value))+_bias;
+//         }
+//         _buffer+=_input;
+//         activate(activationtype);
+//     }
+// }
+
 /**
  * @brief      retrieves and adds the values from preceding linked neurons then activates this neuron.
  */
-void neuron::feed()// feed forward a single neuron
+void neuron::reconstruct()
 {
     if(inweights.size()==0)
     {
@@ -130,55 +184,6 @@ void neuron::feed()// feed forward a single neuron
     }
 }
 
-/**
- * @brief      Sets the weights.
- *
- * @param[in]  val   The value
- */
-void neuron::set_weights(double val)
-{
-    for(int i=0; i<inweights.size();i++)
-    {
-        inweights[i]->_weight=val;
-    }
-}
-
-/**
- * @brief      Sets the weights to random values.
- */
-void neuron::set_rand_weights()
-{
-    for(int i=0; i<inweights.size();i++)
-    {
-        inweights[i]->SetRandWeight();
-    }
-}
-
-/**
- * @brief      retrieves and adds the values from preceding linked neurons then activates this neuron.
- *
- * @param[in]  activationtype  The activationtype
- */
-void neuron::feed(ActivationType activationtype)// feed forward a single neuron
-{
-    if(inweights.size()==0)
-    {
-        _buffer=_input;
-    }
-    else
-    {
-        for(unsigned int i=0; i<inweights.size(); i++)
-        {
-            _buffer+=((inweights[i]->_weight)*(inweights[i]->_origin._value))+_bias;
-        }
-
-
-        _buffer+=_input;
-        activate(activationtype);
-
-    }
-}
-
 void neuron::feed(ActivationType activationtype, *unordered_set<*neuron> activeSubset){
     activeSubset->insert(this);
     feed(activationtype)
@@ -194,29 +199,28 @@ void neuron::clear()
     _buffer=0;
 }
 
+//Todo: switch origin name to destination
+void neuron::feed(ActivationType activationtype){
 
-/**
- * @brief      feed forward a single neuron backwards
- */
-void neuron::reconstruct()
-{
-
-    for(unsigned int i=0; i<inweights.size(); i++)
-    {
-        inweights[i]->_origin._buffer+=_value*inweights[i]->_weight;
-
+    activate(activationtype); 
+    //only multiply and feed value foreward if !=0
+    if(inweights.size()>0 && _value != 0){
+        for(unsigned int i=0; i<inweights.size(); i++)
+        {
+            inweights[i]->_origin._buffer+=_value*inweights[i]->_weight;
+        }
     }
-
 
 }
 
 
-
+//TODO rename this
 /**
  * @brief      to get the error and pass it back
  */
 void neuron::throwup()
 {
+    //todo: ,ake sure this works
     _error=(_value-_desired)+_error;
     _gradient=((learning_rate)*(_error)*((_value)*(1-(_value))));//calculate error for neuron
     if(inweights.size()>0)
@@ -232,12 +236,6 @@ void neuron::throwup()
         }
     }
 }
-/*
-virtual void throwup(net::LearningType leaning_type)
-{
-
-}
-*/
 
 
 

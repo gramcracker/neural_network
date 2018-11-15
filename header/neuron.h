@@ -34,8 +34,7 @@ public:
     ActivationType activation_type=fast_sigmoid;
     double   activation_limit=4.9;
     virtual void activate(ActivationType activationtype=fast_sigmoid);
-    void feed(); // feed forward for this neuron
-    void feed(ActivationType activationtype);
+    void feed(ActivationType activationtype=fast_sigmoid);
     void clear();
     void activate_hormonal();
     void get_entropy();//calculates the amount of information received by the neuron
@@ -72,7 +71,7 @@ protected:
     int entropy=0;// used to give the number of neurons added above this neuron
     double _bias=0;//self explanatory
     double _old_value=0;//previous value of neuron
-    float logistic[101]={
+    double logistic[101]={
   0.0066929, 0.0073915, 0.0081626, 0.0090133, 0.0099518,
   0.010987, 0.012128, 0.013387, 0.014774, 0.016302,
   0.017986, 0.01984, 0.021881, 0.024127, 0.026597,
