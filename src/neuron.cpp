@@ -179,6 +179,11 @@ void neuron::feed(ActivationType activationtype)// feed forward a single neuron
     }
 }
 
+void neuron::feed(ActivationType activationtype, *unordered_set<*neuron> activeSubset){
+    activeSubset->insert(this);
+    feed(activationtype)
+}
+
 
 /**
  * @brief      sets the value of the neuron to zero

@@ -352,7 +352,7 @@ void net::SetDesired(vector<double>& desired)
 
 
 
-void net::FeedForeward(neuron::ActivationType activation_type=neuron::fast_sigmoid)
+void net::FeedForeward(neuron::ActivationType activation_type )
 {
 
     vector<thread> threads;
@@ -384,10 +384,29 @@ void net::FeedForeward(neuron::ActivationType activation_type=neuron::fast_sigmo
 
 }
 
+void net FeedForeward(){
+    neuron::ActivationType activation_type = neuron::fast_sigmoid;
+    int currentLayer = 0;
+    vector<thread> threads;
+    unordered_set activeNeurons;
+    for (int i = 0; i<layers.layer[0].size()){
+        if(!layers.layer[0][i]._buffer==0){
+            threads.push_back(thread([=]{->feed(activation_type,&activeNeurons);}))
+        }
+
+    }
+    for(int i=0; i<threads.size(); i++){
+            threads[i].join();
+        }
+    threads.erase(threads.begin(),threads.end());
+    currentLayer+=1;
+
+
+}
 
 
 
-void net::FeedForeward( int starting_layer, int ending_layer, neuron::ActivationType activation_type=neuron::fast_sigmoid)
+void net::FeedForeward( int starting_layer, int ending_layer, neuron::ActivationType activation_type )
 {
     vector<thread> threads;
 
@@ -415,7 +434,6 @@ void net::FeedForeward( int starting_layer, int ending_layer, neuron::Activation
     }
 
 }
-
 
 
 
@@ -631,13 +649,16 @@ void net::TrainRestrictedBoltzman(int starting_layer)
         (*col)->activate();
         (*col)->_value=(*col)->_buffer;
         cout<<endl<<"neuron "<<i<<"="<<(*col)->_value;
-
-
-
     }
-
-
 }
+
+
+void net::TrainRestrictedBoltzman(int starting_layer, int iterations){
+    for(int i=0; i<iterations; i++){
+        TrainRestrictedBoltzman(starting_layer);
+    }
+}
+
 
 
 void net::OutputToVector(vector<vector<double>>& dataout)//dataout can only be a square
