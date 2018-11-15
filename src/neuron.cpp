@@ -13,7 +13,7 @@ using namespace std;
  */
 neuron::~neuron()
 {
-    cout<<"deleting: "<<this<<endl;
+    //cout<<"deleting: "<<this<<endl;
     int j=0;
         for (  vector <link*>::iterator i=inweights.begin (); i !=inweights.end(); i++)
         {
@@ -43,6 +43,7 @@ void neuron::setin(double input)
  */
 void neuron::activate(ActivationType activationtype)// activation function using a specific Activation type
 {
+    _buffer+=_bias;
     switch(activationtype){
     case none:
         break;
@@ -193,7 +194,7 @@ void neuron::clear()
     _buffer=0;
 }
 
-
+//Todo: switch origin name to destination
 void neuron::feed(ActivationType activationtype){
 
     activate(activationtype); 
@@ -208,6 +209,7 @@ void neuron::feed(ActivationType activationtype){
 }
 
 
+//TODO rename this
 /**
  * @brief      to get the error and pass it back
  */
@@ -229,12 +231,6 @@ void neuron::throwup()
         }
     }
 }
-/*
-virtual void throwup(net::LearningType leaning_type)
-{
-
-}
-*/
 
 
 

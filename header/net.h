@@ -108,7 +108,8 @@ public:
 
   void AddToSequence(int iteration, int layer, int first, int last, void(neuron::*func)());
  // void AddToSequence(int iteration, int layer, void(neuron::*func)());
-
+  //TODO: make main way to run any training and prediction. 
+  //(higher level functions like restricted boltzman set up sequence, then call run sequence)
   void RunSequence();
   ofstream& Save(ofstream& file, bool save_neuron_values =false);
   ifstream& Open(ifstream& file);

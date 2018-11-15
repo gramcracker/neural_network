@@ -328,15 +328,11 @@ void net::FeedForeward(neuron::ActivationType activation_type)
     vector<thread> threads;
     for(int i=0; i<layers.size(); i++)
     {
-        // for(int l=0; l<layers[i].size(); l++)
-        // {
-        //     (((layers[i][l])->_value)=(layers[i][l])->_buffer);//to avoid accessing and activating a neuron at the same time ( like if a neuron is connected to one in the same layer)
-        // }
 
-        if (i==0)_activation_type = neuron::none;//if input layer, dont activate, just multiply by weights
-        else{
-            _activation_type = activation_type;
-        }
+        // if (i==0)_activation_type = neuron::none;//if input layer, dont activate, just multiply by weights
+        // else{
+     _activation_type = activation_type;
+        // }
 
         for(int j=0; j<layers[i].size(); j++)
         {
@@ -743,7 +739,7 @@ net* net::AppendNet(net* net_from, bool pasteOver)
 void net:: Connect(int layer_from, int column_from, int layer_to, int column_to, float weight)
 {
     layers.at(layer_from).at(column_from)->inweights.push_back(new link((*(layers.at(layer_to).at(column_to))), weight));
-    cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<endl;
+    //cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<endl;
 }
 
 void net::Connect(int layer_from, int column_from, int layer_to, int column_to)

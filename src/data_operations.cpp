@@ -9,7 +9,7 @@ using namespace std;
 double data_operations::random_number_generator::generate(){
     mt19937 gen((random_device())());
     uniform_real_distribution<> dis(-1.0, 1.0);
-    return dis(gen);
+        return dis(gen);
     }
 
 //todo:make these use random number generator
