@@ -6,6 +6,7 @@
 #include "link.h"
 #include <iostream>
 #include <string>
+#include <unordered_set>
 
 
 using namespace std;
@@ -26,7 +27,7 @@ public:
     //any other implementation will cause the instance to be deleted twice
 
     ~neuron();
-    vector <link*> inweights; //vector of links coming in. you must push back the links to wire the net
+    vector <link*> outweights; //vector of links coming in. you must push back the links to wire the net
     double _desired=0;// desired output
     double learning_rate=7.5; //learning rate
     enum ActivationType{ none=0, sigmoid, step, tanH, fast_sigmoid };
@@ -35,6 +36,8 @@ public:
     double   activation_limit=4.9;
     virtual void activate(ActivationType activationtype=fast_sigmoid);
     void feed(ActivationType activationtype=fast_sigmoid);
+    void ffeed( unordered_set <neuron*>& activeSubset);
+    void feed(ActivationType activationtype, unordered_set <neuron*>& activeSubset, double threshold);
     void clear();
     void activate_hormonal();
     void get_entropy();//calculates the amount of information received by the neuron

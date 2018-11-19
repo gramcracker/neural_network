@@ -134,6 +134,7 @@ public:
   void FeedForeward(int starting_layer, int ending_layer, neuron::ActivationType activation_type = neuron::fast_sigmoid);
   void FeedForeward( int starting_layer, int ending_layer, int first_neuron, int last_neuron, neuron::ActivationType activation_type = neuron::fast_sigmoid);
   void FeedForeward(vector<double> &input);
+  void FeedForewardFast();
   void Backpropagate();   // backpropagates the error through the network one layer at a time
   void TrainBackpropagation(vector<double>& _desired, vector <double>& _input);
   void TrainBackpropagation(vector<double>& _desired, vector <double>& _input, int _iterations);

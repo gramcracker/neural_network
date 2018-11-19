@@ -7,7 +7,7 @@
 #include "neuron.h"
 #include <tuple>
 #include <string>
-
+#include <unordered_set>
 using namespace std;
 
 /**
@@ -26,11 +26,9 @@ net::net(){cout<<"new net"<<endl;};
 net::net(vector <int> &dimensions, bool fully_connected)
 {
 
-    cout<<"new net"<<endl;
     //creates a number of fully connected neurons and layers based on the dimensions
     int column_size = dimensions.size();
     layers.resize(column_size);
-    cout<<"resized layers"<<endl;
 
     if (fully_connected==true)
     {
@@ -51,7 +49,7 @@ net::~net()
             cout <<endl<<"netPointersCopied";
             return;
         }
-        //deletes all neurons and their inweights
+        //deletes all neurons and their outweights
         for(row=layers.begin(); row!=layers.end(); row++)
         {
 
@@ -101,11 +99,11 @@ net::net(const net& tobecloned)
             tobecloned.layers[i][j]->_ebuffer=j;
             layers[i].push_back(new neuron);
 
-            for(int k=0; k<tobecloned.layers[i][j]->inweights.size(); k++)
+            for(int k=0; k<tobecloned.layers[i][j]->outweights.size(); k++)
             {
-                y=tobecloned.layers[i][j]->inweights[k]->_origin._buffer;
-                x=tobecloned.layers[i][j]->inweights[k]->_origin._ebuffer;
-                layers[i][j]->inweights.push_back(new link(*(layers[y][x])));
+                y=tobecloned.layers[i][j]->outweights[k]->postsynaptic._buffer;
+                x=tobecloned.layers[i][j]->outweights[k]->postsynaptic._ebuffer;
+                layers[i][j]->outweights.push_back(new link(*(layers[y][x])));
             }
 
         }
@@ -152,11 +150,11 @@ net& net::operator=(const net& tobecloned)
                 tobecloned.layers[i][j]->_ebuffer=j;
                 layers[i].push_back(new neuron);
 
-                for(int k=0; k<tobecloned.layers[i][j]->inweights.size(); k++)
+                for(int k=0; k<tobecloned.layers[i][j]->outweights.size(); k++)
                 {
-                    y=tobecloned.layers[i][j]->inweights[k]->_origin._buffer;
-                    x=tobecloned.layers[i][j]->inweights[k]->_origin._ebuffer;
-                    layers[i][j]->inweights.push_back(new link(*(layers[y][x])));
+                    y=tobecloned.layers[i][j]->outweights[k]->postsynaptic._buffer;
+                    x=tobecloned.layers[i][j]->outweights[k]->postsynaptic._ebuffer;
+                    layers[i][j]->outweights.push_back(new link(*(layers[y][x])));
                 }
 
             }
@@ -329,10 +327,10 @@ void net::FeedForeward(neuron::ActivationType activation_type)
     for(int i=0; i<layers.size(); i++)
     {
 
-        // if (i==0)_activation_type = neuron::none;//if input layer, dont activate, just multiply by weights
-        // else{
+         if (i==0)_activation_type = neuron::none;//if input layer, dont activate, just multiply by weights
+         else{
      _activation_type = activation_type;
-        // }
+         }
 
         for(int j=0; j<layers[i].size(); j++)
         {
@@ -351,22 +349,41 @@ void net::FeedForeward(neuron::ActivationType activation_type)
 
 }
 
-void net FeedForeward(){
+void net::FeedForewardFast(){
     neuron::ActivationType activation_type = neuron::fast_sigmoid;
-    int currentLayer = 0;
     vector<thread> threads;
-    unordered_set activeNeurons;
-    for (int i = 0; i<layers.layer[0].size()){
-        if(!layers.layer[0][i]._buffer==0){
-            threads.push_back(thread([=]{->feed(activation_type,&activeNeurons);}))
-        }
 
-    }
-    for(int i=0; i<threads.size(); i++){
-            threads[i].join();
+    unordered_set <neuron*> presynapticSubset;
+    unordered_set <neuron*> postsynapticSubset;
+    
+    for (auto n : layers[0]){
+        if(!n->_buffer==0){
+            threads.push_back(thread(&neuron::ffeed, n, std::ref(postsynapticSubset))); //active l0 set post
+            n->ffeed(postsynapticSubset);
         }
-    threads.erase(threads.begin(),threads.end());
-    currentLayer+=1;
+    }
+    start:
+    for(int i = 0; i< threads.size(); i++){threads[i].join();}                              //join threads
+    threads.erase(threads.begin(),threads.end());                                           //erase threads
+    presynapticSubset.erase(presynapticSubset.begin(), presynapticSubset.end());            //clear pre
+    if(postsynapticSubset.empty())return;                                                 //check if post
+    for(auto n : postsynapticSubset){
+        threads.push_back(thread(&neuron::ffeed, n, std::ref(presynapticSubset)));     //active post set pre
+        
+    }
+    for(int i = 0; i< threads.size(); i++){threads[i].join();}                            //join threads
+    threads.erase(threads.begin(),threads.end());                                           //erase threads
+    postsynapticSubset.erase(postsynapticSubset.begin(), postsynapticSubset.end());         //clear post
+
+    if(presynapticSubset.empty())return;                                                  //check if pre
+    for(auto n: presynapticSubset){
+        threads.push_back(thread(&neuron::ffeed, n, std::ref(postsynapticSubset)));    //active pre set post
+    
+    }
+    goto start;
+}
+
+
 
 //todo: fix to match above
 void net::FeedForeward( int starting_layer, int ending_layer, neuron::ActivationType activation_type)
@@ -503,10 +520,10 @@ void net::ContrastDiverge( int starting_layer)
             (*col)->_value>=.5?(*col)->_value=1:(*col)->_value=0;
 
 
-            for(unsigned int i=0;i<((*col)->inweights.size());i++)
+            for(unsigned int i=0;i<((*col)->outweights.size());i++)
             {
-                (*col)->inweights[i]->_positive_phase=((*col)->_value)*((*col)->inweights[i]->_origin._value);
-                cout<<endl<<"positive phase ="<<(*col)->inweights[i]->_positive_phase;
+                (*col)->outweights[i]->_positive_phase=((*col)->_value)*((*col)->outweights[i]->postsynaptic._value);
+                cout<<endl<<"positive phase ="<<(*col)->outweights[i]->_positive_phase;
             }
         }
 
@@ -553,13 +570,13 @@ void net::ContrastDiverge( int starting_layer)
             (*col)->_value>=.5?(*col)->_value=1:(*col)->_value=0;
 
 
-            for(unsigned int i=0;i<((*col)->inweights.size());i++)
+            for(unsigned int i=0;i<((*col)->outweights.size());i++)
             {
 
-                (*col)->inweights[i]->_negative_phase=((*col)->_value)*((*col)->inweights[i]->_origin._input);
-                (*col)->inweights[i]->_weight+=(*col)->learning_rate*(((*col)->inweights[i]->_positive_phase)-((*col)->inweights[i]->_negative_phase));
-                cout<<endl<< "negative phase ="<<(*col)->inweights[i]->_negative_phase;
-                cout<<endl<<"new weight ="<<(*col)->inweights[i]->_weight;
+                (*col)->outweights[i]->_negative_phase=((*col)->_value)*((*col)->outweights[i]->postsynaptic._input);
+                (*col)->outweights[i]->_weight+=(*col)->learning_rate*(((*col)->outweights[i]->_positive_phase)-((*col)->outweights[i]->_negative_phase));
+                cout<<endl<< "negative phase ="<<(*col)->outweights[i]->_negative_phase;
+                cout<<endl<<"new weight ="<<(*col)->outweights[i]->_weight;
             }
         }
 
@@ -676,11 +693,11 @@ net* clone(net& tobecloned)
             tobecloned.layers[i][j]->_ebuffer=j;
             cloned_net->layers[i].push_back(new neuron);
 
-        for(int k=0; k<tobecloned.layers[i][j]->inweights.size(); k++)
+        for(int k=0; k<tobecloned.layers[i][j]->outweights.size(); k++)
         {
-            row=tobecloned.layers[i][j]->inweights[k]->_origin._buffer;
-            column=tobecloned.layers[i][j]->inweights[k]->_origin._ebuffer;
-            cloned_net->layers[i][j]->inweights.push_back(new link(*(cloned_net->layers[row][column])));
+            row=tobecloned.layers[i][j]->outweights[k]->postsynaptic._buffer;
+            column=tobecloned.layers[i][j]->outweights[k]->postsynaptic._ebuffer;
+            cloned_net->layers[i][j]->outweights.push_back(new link(*(cloned_net->layers[row][column])));
         }
 
         }
@@ -756,7 +773,7 @@ net* net::AppendNet(net* net_from, bool pasteOver)
 
 void net:: Connect(int layer_from, int column_from, int layer_to, int column_to, float weight)
 {
-    layers.at(layer_from).at(column_from)->inweights.push_back(new link((*(layers.at(layer_to).at(column_to))), weight));
+    layers.at(layer_from).at(column_from)->outweights.push_back(new link((*(layers.at(layer_to).at(column_to))), weight));
     //cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<endl;
 }
 
@@ -772,7 +789,7 @@ void net::FullyConnect( net* net_to, int layer_from, int layer_to)
     {
         for(int j= 0; j<this->layers.at(layer_from).size();j++)
         {
-            net_to->layers.at(layer_to).at(i)->inweights.push_back(new link(*this->layers.at(layer_from).at(j)));
+            net_to->layers.at(layer_to).at(i)->outweights.push_back(new link(*this->layers.at(layer_from).at(j)));
         }
 
     }
@@ -787,7 +804,7 @@ void net::FullyConnect(int layer_from, int lfstart, int lfend, int layer_to, int
             for (int k=ltstart; k <=ltend;k++)
                 {
 
-                    //layers[layer_to][j]->inweights.push_back (new link(*(layers [layer_from][k])));
+                    //layers[layer_to][j]->outweights.push_back (new link(*(layers [layer_from][k])));
                     Connect(layer_from, k, layer_to, j);
                     //cout<<endl<<"new link from "<<layer_from<<","<<j<<" to "<<layer_to<<","<<k;
 
@@ -809,7 +826,7 @@ void net::FullyConnect(int layer_from, int lfstart, int lfend, int layer_to, int
                             for (int k=lfstart; k <(lfend-lfstart);k++)
                             {
 
-                                //layers[i][j]->inweights.push_back (new link(*(layers [i-1][k])));
+                                //layers[i][j]->outweights.push_back (new link(*(layers [i-1][k])));
                                 Connect(i-1,k,i,j);
                                 //cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
 
@@ -859,7 +876,7 @@ void net::AddFullyConnectedNeurons(int amount, int layer)
         {
             for (int j=0; j < layers[layer-1].size();j++){
 
-                    //layers[layer][original+i]->inweights.push_back (new link(*(layers [layer-1][j])));
+                    //layers[layer][original+i]->outweights.push_back (new link(*(layers [layer-1][j])));
                     Connect(layer-1, j, layer, original + i);
 
 
@@ -871,7 +888,7 @@ void net::AddFullyConnectedNeurons(int amount, int layer)
         {
             for (int k=0; k <layers [layer+1].size();k++)
             {
-                //layers[layer+1][k]->inweights.push_back (new link(*(layers [layer][original+i])));
+                //layers[layer+1][k]->outweights.push_back (new link(*(layers [layer][original+i])));
                 Connect(layer, original+i, layer+1, k);
                 //cout<<"new link from "<<(layer)<<","<<original+i<<" to "<<layer+1<<","<<k<<endl;
             }
@@ -1159,7 +1176,7 @@ ofstream& net::Save(ofstream& file, bool save_neuron_values)
             //set the coordinates inside each neuron to access them later
             layers[i][j]->row=i;
             layers[i][j]->col=j;
-            link_count+=layers[i][j]->inweights.size();
+            link_count+=layers[i][j]->outweights.size();
 
             if(save_neuron_values==true)
             {
@@ -1177,13 +1194,13 @@ ofstream& net::Save(ofstream& file, bool save_neuron_values)
         for(int j=0; j<layers[i].size(); j++)
         {
 
-            for(int k=0; k<layers[i][j]->inweights.size(); k++)//then 5 values representing connection coordinates and weight value
+            for(int k=0; k<layers[i][j]->outweights.size(); k++)//then 5 values representing connection coordinates and weight value
             {
-                file<<layers[i][j]->inweights[k]->_origin.row<<" ";//layer to connect from
-                file<<layers[i][j]->inweights[k]->_origin.col<<" ";//neuron to connect from
+                file<<layers[i][j]->outweights[k]->postsynaptic.row<<" ";//layer to connect from
+                file<<layers[i][j]->outweights[k]->postsynaptic.col<<" ";//neuron to connect from
                 file<<i<<" ";//layer to connect to
                 file<<j<<" ";//neuron to connect to
-                file<<layers[i][j]->inweights[k]->_weight<<" ";//weight(double)
+                file<<layers[i][j]->outweights[k]->_weight<<" ";//weight(double)
             }
         }
     }
@@ -1274,12 +1291,12 @@ ifstream& net::Open(ifstream& file)
 
 void net::SetWeights(double val, int _layer, int _neuron, int _link)
 {
-    layers.at(_layer).at(_neuron)->inweights.at(_link)->SetWeight(val);
+    layers.at(_layer).at(_neuron)->outweights.at(_link)->SetWeight(val);
 }
 
 void net::SetWeights(double val, int _layer, int _neuron)
 {
-    for(int i=0; i<layers.at(_layer).at(_neuron)->inweights.size(); i++)
+    for(int i=0; i<layers.at(_layer).at(_neuron)->outweights.size(); i++)
     {
         SetWeights(val, _layer, _neuron, i);
     }
@@ -1316,12 +1333,12 @@ void net::CleanAfterBuild()
 //todo:fix to use new random generator
 // void net::RandomizeWeights(int _layer, int _neuron, int _link)
 // {
-//  layers.at(_layer).at(_neuron)->inweights.at(_link)->SetRandWeight();
+//  layers.at(_layer).at(_neuron)->outweights.at(_link)->SetRandWeight();
 // }
 
 // void net::RandomizeWeights(int _layer, int _neuron)
 // {
-//     for(int i=0; i<layers.at(_layer).at(_neuron)->inweights.size(); i++)
+//     for(int i=0; i<layers.at(_layer).at(_neuron)->outweights.size(); i++)
 //     {
 //         RandomizeWeights(_layer, _neuron, i);
 //     }

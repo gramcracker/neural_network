@@ -15,11 +15,11 @@ neuron::~neuron()
 {
     //cout<<"deleting: "<<this<<endl;
     int j=0;
-        for (  vector <link*>::iterator i=inweights.begin (); i !=inweights.end(); i++)
+        for (  vector <link*>::iterator i=outweights.begin (); i !=outweights.end(); i++)
         {
             delete (*i);
         }
-        inweights.clear ();
+        outweights.clear ();
 
 }
 
@@ -112,9 +112,9 @@ void neuron::set_bias(double bias)
  */
 void neuron::set_weights(double val)
 {
-    for(int i=0; i<inweights.size();i++)
+    for(int i=0; i<outweights.size();i++)
     {
-        inweights[i]->_weight=val;
+        outweights[i]->_weight=val;
     }
 }
 
@@ -126,15 +126,15 @@ void neuron::set_weights(double val)
  */
 // void neuron::feed(ActivationType activationtype)// feed forward a single neuron
 // {
-//     if(inweights.size()==0)
+//     if(outweights.size()==0)
 //     {
 //         _buffer=_input;
 //     }
 //     else
 //     {
-//         for(unsigned int i=0; i<inweights.size(); i++)
+//         for(unsigned int i=0; i<outweights.size(); i++)
 //         {
-//             _buffer+=((inweights[i]->_weight)*(inweights[i]->_origin._value))+_bias;
+//             _buffer+=((outweights[i]->_weight)*(outweights[i]->postsynaptic._value))+_bias;
 //         }
 
 
@@ -146,15 +146,15 @@ void neuron::set_weights(double val)
 
 // void neuron::reconstruct(ActivationType activationtype)
 // {
-//     if(inweights.size()==0)
+//     if(outweights.size()==0)
 //     {
 //         _buffer=_input;
 //     }
 //     else
 //     {
-//         for(unsigned int i=0; i<inweights.size(); i++)
+//         for(unsigned int i=0; i<outweights.size(); i++)
 //         {
-//             _buffer+=((inweights[i]->_weight)*(inweights[i]->_origin._value))+_bias;
+//             _buffer+=((outweights[i]->_weight)*(outweights[i]->postsynaptic._value))+_bias;
 //         }
 //         _buffer+=_input;
 //         activate(activationtype);
@@ -166,15 +166,15 @@ void neuron::set_weights(double val)
  */
 void neuron::reconstruct()
 {
-    if(inweights.size()==0)
+    if(outweights.size()==0)
     {
         _buffer=_input;
     }
     else
     {
-        for(unsigned int i=0; i<inweights.size(); i++)
+        for(unsigned int i=0; i<outweights.size(); i++)
         {
-            _buffer+=((inweights[i]->_weight)*(inweights[i]->_origin._value))+_bias;
+            _buffer+=((outweights[i]->_weight)*(outweights[i]->postsynaptic._value))+_bias;
         }
 
 
@@ -184,9 +184,30 @@ void neuron::reconstruct()
     }
 }
 
-void neuron::feed(ActivationType activationtype, *unordered_set<*neuron> activeSubset){
-    activeSubset->insert(this);
-    feed(activationtype)
+void neuron::ffeed(unordered_set<neuron*> &activeSubset){
+    activate(neuron::fast_sigmoid); 
+    //only multiply and feed value foreward if !=0
+    if(outweights.size()>0 && _value != 0){
+        for(unsigned int i=0; i<outweights.size(); i++)
+        {
+            outweights[i]->postsynaptic._buffer+=_value*outweights[i]->_weight;
+            activeSubset.insert(&(outweights[i]->postsynaptic));
+        }
+    }
+}
+
+void neuron::feed(ActivationType activationtype, unordered_set<neuron*> &activeSubset, double threshold){
+    activate(activationtype); 
+    //only multiply and feed value foreward if !=0
+    if(outweights.size()>0 && _value != 0){
+        for(unsigned int i=0; i<outweights.size(); i++)
+        {
+            outweights[i]->postsynaptic._buffer+=_value*outweights[i]->_weight;
+            if(outweights[i]->postsynaptic._buffer> threshold){
+                activeSubset.insert(&(outweights[i]->postsynaptic));
+            }
+        }
+    }
 }
 
 
@@ -199,15 +220,15 @@ void neuron::clear()
     _buffer=0;
 }
 
-//Todo: switch origin name to destination
+
 void neuron::feed(ActivationType activationtype){
 
     activate(activationtype); 
     //only multiply and feed value foreward if !=0
-    if(inweights.size()>0 && _value != 0){
-        for(unsigned int i=0; i<inweights.size(); i++)
+    if(outweights.size()>0 && _value != 0){
+        for(unsigned int i=0; i<outweights.size(); i++)
         {
-            inweights[i]->_origin._buffer+=_value*inweights[i]->_weight;
+            outweights[i]->postsynaptic._buffer+=_value*outweights[i]->_weight;
         }
     }
 
@@ -223,14 +244,14 @@ void neuron::throwup()
     //todo: ,ake sure this works
     _error=(_value-_desired)+_error;
     _gradient=((learning_rate)*(_error)*((_value)*(1-(_value))));//calculate error for neuron
-    if(inweights.size()>0)
+    if(outweights.size()>0)
     {
-        for(unsigned int i=0; i<inweights.size(); i++)
+        for(unsigned int i=0; i<outweights.size(); i++)
         {
-            inweights[i]->_origin._ebuffer+=(inweights[i]->_weight)*(_gradient);//pass the error before weight change
-            inweights[i]->_old_weight=inweights[i]->_weight;
-            inweights[i]->_weight-=_gradient*(inweights[i]->_origin._value);
-            inweights[i]->_origin._desired=(inweights[i]->_origin._value);
+            outweights[i]->postsynaptic._ebuffer+=(outweights[i]->_weight)*(_gradient);//pass the error before weight change
+            outweights[i]->_old_weight=outweights[i]->_weight;
+            outweights[i]->_weight-=_gradient*(outweights[i]->postsynaptic._value);
+            outweights[i]->postsynaptic._desired=(outweights[i]->postsynaptic._value);
 
 
         }
