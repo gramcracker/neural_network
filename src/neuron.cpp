@@ -70,6 +70,7 @@ void neuron::activate(ActivationType activationtype)// activation function using
     }
     _value = _buffer;
     //information.insert(_buffer);
+    cout<<_value<<" ";
 
 }
 
@@ -184,8 +185,8 @@ void neuron::reconstruct()
     }
 }
 
-void neuron::ffeed(unordered_set<neuron*> &activeSubset){
-    activate(neuron::fast_sigmoid); 
+void neuron::ffeed(ActivationType activationtype, unordered_set<neuron*> &activeSubset){
+    activate(activationtype); 
     //only multiply and feed value foreward if !=0
     if(outweights.size()>0 && _value != 0){
         for(unsigned int i=0; i<outweights.size(); i++)

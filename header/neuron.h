@@ -36,7 +36,7 @@ public:
     double   activation_limit=4.9;
     virtual void activate(ActivationType activationtype=fast_sigmoid);
     void feed(ActivationType activationtype=fast_sigmoid);
-    void ffeed( unordered_set <neuron*>& activeSubset);
+    void ffeed(ActivationType activationtype, unordered_set <neuron*>& activeSubset);
     void feed(ActivationType activationtype, unordered_set <neuron*>& activeSubset, double threshold);
     void clear();
     void activate_hormonal();
@@ -64,7 +64,6 @@ public:
     int row;
     int col;
 
-protected:
     multiset<float> information;//multi-sets can give the number of individual values
 
     double _gradient=0;

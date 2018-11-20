@@ -320,64 +320,66 @@ void net::SetDesired(vector<double>& desired)
 
 
 
-void net::FeedForeward(neuron::ActivationType activation_type)
-{
-    neuron::ActivationType _activation_type = activation_type;
-    vector<thread> threads;
-    for(int i=0; i<layers.size(); i++)
-    {
+// void net::FeedForeward(neuron::ActivationType activation_type)
+// {
+//     neuron::ActivationType _activation_type = activation_type;
+//     vector<thread> threads;
+//     for(int i=0; i<layers.size(); i++)
+//     {
 
-         if (i==0)_activation_type = neuron::none;//if input layer, dont activate, just multiply by weights
-         else{
-     _activation_type = activation_type;
-         }
+//          if (i==0)_activation_type = neuron::none;//if input layer, dont activate, just multiply by weights
+//          else{
+//      _activation_type = activation_type;
+//          }
 
-        for(int j=0; j<layers[i].size(); j++)
-        {
-            threads.push_back(thread([=]{(layers[i][j])->feed(_activation_type);}));
-        }
-        for(int k=0; k<threads.size(); k++)
-        {
-            threads[k].join();
-        }
+//         for(int j=0; j<layers[i].size(); j++)
+//         {
+//             threads.push_back(thread([=]{(layers[i][j])->feed(_activation_type);}));
+//         }
+//         for(int k=0; k<threads.size(); k++)
+//         {
+//             threads[k].join();
+//         }
 
-        threads.erase(threads.begin(),threads.end());
+//         threads.erase(threads.begin(),threads.end());
 
-        if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
+//         if (threads.size()>0){cout<<endl<<threads.size()<<"threads remain";}
 
-    }
+//     }
 
-}
+// }
 
-void net::FeedForewardFast(){
-    neuron::ActivationType activation_type = neuron::fast_sigmoid;
+void net::FeedForeward(neuron::ActivationType activation_type){
+    
     vector<thread> threads;
 
     unordered_set <neuron*> presynapticSubset;
     unordered_set <neuron*> postsynapticSubset;
     
-    for (auto n : layers[0]){
+    for (auto& n : layers[0]){
         if(!n->_buffer==0){
-            threads.push_back(thread(&neuron::ffeed, n, std::ref(postsynapticSubset))); //active l0 set post
-            n->ffeed(postsynapticSubset);
+            threads.push_back(thread(&neuron::ffeed, n, neuron::none, std::ref(postsynapticSubset))); //active l0 set post
         }
     }
     start:
     for(int i = 0; i< threads.size(); i++){threads[i].join();}                              //join threads
     threads.erase(threads.begin(),threads.end());                                           //erase threads
     presynapticSubset.erase(presynapticSubset.begin(), presynapticSubset.end());            //clear pre
-    if(postsynapticSubset.empty())return;                                                 //check if post
-    for(auto n : postsynapticSubset){
-        threads.push_back(thread(&neuron::ffeed, n, std::ref(presynapticSubset)));     //active post set pre
+    if(postsynapticSubset.empty())return;                                                     //check if post
+    cout<<endl;
+
+    for(auto &n : postsynapticSubset){
+        threads.push_back(thread(&neuron::ffeed, n, activation_type, std::ref(presynapticSubset)));     //active post set pre
         
     }
     for(int i = 0; i< threads.size(); i++){threads[i].join();}                            //join threads
     threads.erase(threads.begin(),threads.end());                                           //erase threads
     postsynapticSubset.erase(postsynapticSubset.begin(), postsynapticSubset.end());         //clear post
+    cout<<endl;
 
     if(presynapticSubset.empty())return;                                                  //check if pre
-    for(auto n: presynapticSubset){
-        threads.push_back(thread(&neuron::ffeed, n, std::ref(postsynapticSubset)));    //active pre set post
+    for(auto& n: presynapticSubset){
+        threads.push_back(thread(&neuron::ffeed, n, activation_type, std::ref(postsynapticSubset)));    //active pre set post
     
     }
     goto start;
@@ -586,14 +588,13 @@ void net::ContrastDiverge( int starting_layer)
 
 void net::Output()
 {
-    int i=0;
-    for(rrow=layers.rbegin(); rrow!=layers.rend(); rrow++)
+    for(int i=0; i<layers.size(); i++)
     {
-        for(rcol=rrow->rbegin(); rcol !=rrow->rend(); rcol++)
+        for(int j=0; j<layers.at(i).size(); j++)
         {
-            cout<<endl<<"neuron"<<i<<"="<<(*rcol)->_value;
-            i++;
+            cout<<"("<<i<<","<<j<<")="<<layers.at(i).at(j)->_value<<" ";
         }
+        cout<<endl;
 
     }
 }
@@ -774,7 +775,7 @@ net* net::AppendNet(net* net_from, bool pasteOver)
 void net:: Connect(int layer_from, int column_from, int layer_to, int column_to, float weight)
 {
     layers.at(layer_from).at(column_from)->outweights.push_back(new link((*(layers.at(layer_to).at(column_to))), weight));
-    //cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<endl;
+    cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<endl;
 }
 
 void net::Connect(int layer_from, int column_from, int layer_to, int column_to)
