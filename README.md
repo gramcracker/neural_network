@@ -19,7 +19,7 @@ As stated above, this is still a work in progress, and I have yet to implement a
 
 ## Getting Started
 ### Prerequisites
-You will need c++11 support. This works best with g++11 and up. You may need to tell your compiler to use the thread library with the -lpthread option.
+You will need support for c++ >= 11. This works best with g++ >= 11. You may need to tell your compiler to use the thread library with the -lpthread option.
 
 ```
 g++ -std=c++11 foo.cpp -lpthread -o foo
