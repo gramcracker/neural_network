@@ -19,22 +19,15 @@ As stated above, this is still a work in progress, and I have yet to implement a
 
 ## Getting Started
 ### Prerequisites
-You will need support for c++ >= 11. This works best with g++ >= 11. You may need to tell your compiler to use the thread library with the -lpthread option.
+You will need support for c++ >= 11. This works best with g++ >= 11, and the pthread library.
 
-```
-g++ -std=c++11 foo.cpp -lpthread -o foo
-```
 ### Installing
-Download the files and place in respective folders then edit the makefile to fit your project.
+```
+cd build
+cmake ..
+make
+```
+then copy the generated neuralnetwork.so file to your project or library path. E.g. /usr/lib/
 
 ### Usage
 Examples on how to use this library can be found in neural_network/examples/.
-
-Compiling examples (linux):
-
-```
-$ cd path/to/neural_network
-$ mv examples/ExampleFile.cpp src/main.cpp
-$ make
-$ ./bin/a.out
-```

@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+file(GLOB_RECURSE libsrc src/*.cpp)
+add_library(neuralnetwork SHARED ${libsrc})
+target_link_libraries(neuralnetwork pthread)
+target_include_directories(neuralnetwork PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
