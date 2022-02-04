@@ -27,7 +27,9 @@ cd build
 cmake ..
 make
 ```
-then copy the generated neuralnetwork.so file to your project or library path. E.g. /usr/lib/
+then copy the generated neuralnetwork.so + header files to your project or library path. E.g.
+put neuralnetwork.so in ```usr/local/lib/``` and .h files into ```usr/local/include/```
+then run ```ldconfig```, #include <neuralnetwork/net.h> in your program and compile.
 
 ### Usage
 Examples on how to use this library can be found in neural_network/examples/.
