@@ -22,6 +22,7 @@ As stated above, this is still a work in progress, and I have yet to implement a
 You will need support for c++ >= 11. This works best with g++ >= 11, and the pthread library.
 
 ### Installing
+download the repo and in the terminal type:
 ```
 cd build
 cmake ..
@@ -29,7 +30,7 @@ make
 ```
 then copy the generated neuralnetwork.so + header files to your project or library path. E.g.
 put neuralnetwork.so in ```usr/local/lib/``` and .h files into ```usr/local/include/```
-then run ```ldconfig```, #include <neuralnetwork/net.h> in your program and compile.
+then run ```ldconfig```, put ```#include <neuralnetwork/net.h>``` in your program and compile.
 
 ### Usage
 Examples on how to use this library can be found in neural_network/examples/.
