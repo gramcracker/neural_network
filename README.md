@@ -22,7 +22,7 @@ As stated above, this is still a work in progress, and I have yet to implement a
 You will need support for c++ >= 11. This works best with g++ >= 11, and the pthread library.
 
 ### Installing
-download the repo and in the terminal type:
+download the repo and in the terminal from inside neural_network/ type:
 ```
 cd build
 cmake ..
