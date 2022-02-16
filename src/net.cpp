@@ -8,13 +8,15 @@
 #include <tuple>
 #include <string>
 #include <unordered_set>
+
+
+
 using namespace std;
 
 /**
  * @brief      Constructs the net object.
  */
 net::net(){cout<<"new net"<<endl;};
-
 
 
 /**
@@ -750,7 +752,6 @@ void net::AddNeurons(vector<int> &dimensions, string identifying_tag){
         AddNeurons(dimensions[i],i, identifying_tag);
     }
 }
-
 
 
 

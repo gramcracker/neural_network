@@ -1,10 +1,9 @@
 # neural_network
-This is my personal project to make a realatively simple neural network framework in C++.
-I created it specifically for experimentation with real time natural language processing 
-and sementic analysis, although it is still a work in progress.
+This is a realatively simple neural network framework in C++. 
 
-I created this because I needed a framework that could be configured in complex and irregular ways for easy experimentation. In order to suit my needs, it has have the following features:
+I created this because I needed a framework that could be configured in complex and irregular ways for easy experimentation. It has have the following features:
 
+* -NEW- now outputs a python wrapper module.
 * Layer by layer syntax. ✓
 * Copy and paste of any portion of the net. ✓
 * Ability for network to build or erase connections. x
@@ -19,15 +18,23 @@ As stated above, this is still a work in progress, and I have yet to implement a
 
 ## Getting Started
 ### Prerequisites
-You will need support for c++ >= 11. This works best with g++ >= 11, and the pthread library.
+-cmake
+-You will need support for c++ >= 11. This works best with g++ >= 11, and the pthread library.
+-To generate the python wrapper you will also need python3-pybind11 or copy the git repo into the local python folder. If using pybind11 locally, make sure to follow directions in the CMakeLists.txt file.
 
-### Installing
+
+### building
 ```
 cd build
 cmake ..
 make
 ```
-then copy the generated neuralnetwork.so file to your project or library path. E.g. /usr/lib/
+### Installing
+```
+chmod +x install.sh
+sudo sh install.sh
+```
+this just copies the generated neuralnetwork.so file to your project to /usr/local/lib/ and the header files to /usr/local/include/neuralnetwork/
 
 ### Usage
 Examples on how to use this library can be found in neural_network/examples/.
