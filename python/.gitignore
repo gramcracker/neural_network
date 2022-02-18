@@ -1,3 +1,4 @@
 *
-!.gitignore
+!pybind11/
 !pyInterface.cpp
+!.gitignore

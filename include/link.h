@@ -28,6 +28,7 @@ class link
   neuron& postsynaptic;
 
   void SetWeight(double x);/**< sets a specified weight to the object */
+  double GetWeight();/**gets the weight */
 
   friend class net;
   friend class neuron;

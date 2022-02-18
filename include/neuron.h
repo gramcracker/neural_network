@@ -63,9 +63,7 @@ public:
     //used for saving position of neurons
     int row;
     int col;
-
-    multiset<float> information;//multi-sets can give the number of individual values
-
+    
     double _gradient=0;
     double _value=0; //the input from array of links or weights
     double _input=0;//input into the network

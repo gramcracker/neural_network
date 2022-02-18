@@ -13,16 +13,21 @@
 #include <iostream>
 
 
-
 using namespace std;
 
 class net //represents a the vector of vectors of neurons
 {
-public:
 
-  data_operations::random_number_generator rand_generator;
+
+public:
+    //flags
+    bool VERBOSE_MODE = true;
+    bool VISUALIZE_WEIGHTS = false;
+    bool VISUALIZE_SPIKES = false;
 
     
+    data_operations::random_number_generator rand_generator;
+
     struct Operation
     {
     public:
@@ -88,7 +93,6 @@ public:
   vector<vector<neuron*>>::iterator row;
   vector<neuron*>::reverse_iterator rcol;
   vector<vector<neuron*>>::reverse_iterator rrow;
-  vector<double>hormones; //
   vector<double> desired;
   vector<double> input;
   typedef vector <string> group;
@@ -110,7 +114,6 @@ public:
   }
 
 
-
   void AddToSequence(int iteration, int layer, int first, int last, void(neuron::*func)());
  // void AddToSequence(int iteration, int layer, void(neuron::*func)());
   //TODO: make main way to run any training and prediction. 
@@ -119,6 +122,7 @@ public:
   ofstream& Save(ofstream& file, bool save_neuron_values =false);
   ifstream& Open(ifstream& file);
 
+  void SetVerboseMode(bool verboseMode);
   void SetDesired(vector<double>& desired);   //sets the desired Output of the network for Training
   void SetInput(vector <double>& input);   //sets the input of the network
   void UserInput();
@@ -132,6 +136,10 @@ public:
   void SetWeights(double val, int _layer, int _neuron);
   void SetWeights(double val, int _layer);
   void SetWeights(double val);
+  float GetWeights(int layer_from, int layer_to, int _link);
+  vector<float> GetWeights(int layer_from, int layer_to);
+  vector<float> GetWeights(int _layer);
+  vector<vector<float>> GetWeights();
 
   void RandomizeWeights(int _layer, int _neuron, int _link);
   void RandomizeWeights(int _layer, int _neuron);
@@ -151,7 +159,6 @@ public:
   void ContrastDiverge( int starting_layer);   //performs the contrast divergent algorithm between the layer selected and the next layer
 
   void Output();   //displays the Output values of the neurons in every layer
-  void Output(string cmd);
   double Output(int row, int column); //returns the output value of the neuron selected
 
   void TrainRestrictedBoltzman(int starting_layer);  //performs the restricted boltzmann machine algorithm between the layer selected and the next layer
@@ -172,6 +179,7 @@ public:
   void SingleConnect();
   void SingleConnect(int layer_from, int layer_to);
   void SingleConnect( string identifying_tag_1, string Identifying_tag_2);
+  
   void SingleConnectToRows(int layer_from, int layer_to);
   void SingleConnectToRows(string identifying_tag_1, string identifying_tag_2);
   void SingleConnectToColumns(int layer_from, int layer_to);

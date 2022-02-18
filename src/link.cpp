@@ -12,3 +12,6 @@ void link::SetWeight(double x)
 
 }
 
+double link::GetWeight(){
+    return _weight;
+}

@@ -10,13 +10,19 @@
 #include <unordered_set>
 
 
-
 using namespace std;
+
+
 
 /**
  * @brief      Constructs the net object.
  */
-net::net(){cout<<"new net"<<endl;};
+net::net(){
+
+
+    cout<<"new net"<<endl;
+    
+};
 
 
 /**
@@ -167,11 +173,18 @@ net& net::operator=(const net& tobecloned)
 
     }
 
-
+/**
+ * @brief Sets the verbose mode flag to generate verbose output log to terminal.
+ * 
+ * @param verboseMode 
+ */
+void net::SetVerboseMode(bool verboseMode){
+    VERBOSE_MODE = verboseMode;
+}
 
 
 /**
- * @brief      Gets the size.
+ * @brief      Gets the number of layers.
  *
  * @return     The size.
  */
@@ -632,7 +645,10 @@ void net::TrainRestrictedBoltzman(int starting_layer)
         i++;
         (*col)->activate();
         (*col)->_value=(*col)->_buffer;
-        cout<<endl<<"neuron "<<i<<"="<<(*col)->_value;
+        if(VERBOSE_MODE){
+            cout<<endl<<"neuron "<<i<<"="<<(*col)->_value;
+        }
+        
     }
 }
 
@@ -728,7 +744,9 @@ void net::AddNeurons(int amount, int layer, string identifying_tag)
     {
         vector <neuron*> l;
         layers.push_back(l);
-        cout<<"layers size: "<<layers.size()<<endl;
+        if(VERBOSE_MODE){
+            cout<<"layers size: "<<layers.size()<<endl;
+        }
     }
 
     if(identifying_tag!=""){
@@ -741,7 +759,10 @@ void net::AddNeurons(int amount, int layer, string identifying_tag)
     {
         layers[layer].push_back(new neuron);
         if(identifying_tag!="") groups[layer].push_back(identifying_tag);
-        //cout <<"new neuron at "<<layer<<" in group "<<identifying_tag<<endl;
+        if(VERBOSE_MODE){
+            cout <<"new neuron at "<<layer<<" in group "<<identifying_tag<<endl;
+        }
+        
 
     }
 
@@ -776,7 +797,10 @@ net* net::AppendNet(net* net_from, bool pasteOver)
 void net:: Connect(int layer_from, int column_from, int layer_to, int column_to, float weight)
 {
     layers.at(layer_from).at(column_from)->outweights.push_back(new link((*(layers.at(layer_to).at(column_to))), weight));
-    cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<endl;
+    if(VERBOSE_MODE){
+        cout<<"new link from "<<layer_from<<":"<<column_from<<" to "<<layer_to<<":"<<column_to<<" val:"<<weight<<endl;
+    }
+    
 }
 
 void net::Connect(int layer_from, int column_from, int layer_to, int column_to)
@@ -806,9 +830,7 @@ void net::FullyConnect(int layer_from, int lfstart, int lfend, int layer_to, int
             for (int k=ltstart; k <=ltend;k++)
                 {
 
-                    //layers[layer_to][j]->outweights.push_back (new link(*(layers [layer_from][k])));
                     Connect(layer_from, k, layer_to, j);
-                    //cout<<endl<<"new link from "<<layer_from<<","<<j<<" to "<<layer_to<<","<<k;
 
                 }
         }
@@ -817,20 +839,15 @@ void net::FullyConnect(int layer_from, int lfstart, int lfend, int layer_to, int
         for (int i=layer_from; i <=layer_to && i<layers.size(); i++)
             {
 
-                cout<<endl<<"i="<<i;
-
                 for (int j=ltstart; j <=(ltend-ltstart); j++)
                 {
-                    cout<<endl<<"j="<<j;
 
                     if (i>=(layer_from+1))
                         {
-                            for (int k=lfstart; k <(lfend-lfstart);k++)
+                            for (int k=lfstart; k <=(lfend-lfstart);k++)
                             {
-
-                                //layers[i][j]->outweights.push_back (new link(*(layers [i-1][k])));
+                                
                                 Connect(i-1,k,i,j);
-                                //cout<<endl<<"new link from "<<(i-1)<<","<<k<<" to "<<i<<","<<j;
 
                             }
                         }
@@ -892,7 +909,6 @@ void net::AddFullyConnectedNeurons(int amount, int layer)
             {
                 //layers[layer+1][k]->outweights.push_back (new link(*(layers [layer][original+i])));
                 Connect(layer, original+i, layer+1, k);
-                //cout<<"new link from "<<(layer)<<","<<original+i<<" to "<<layer+1<<","<<k<<endl;
             }
 
         }
@@ -923,7 +939,6 @@ void net::SingleConnect(int layer_from, int layer_to)
         for(int j=0; j<layers[i].size(); j++)
         {
             Connect(layer_from,j,layer_to,j);
-            //cout<<"new link from "<<layer_from<<","<<j<<" to "<<layer_to<<","<<j<<endl;
         }
     }
 }
@@ -1157,7 +1172,7 @@ ofstream& net::Save(ofstream& file, bool save_neuron_values)
     }
 
     int link_count=0;
-    vector <tuple<int,int,int,double>> linkdata;
+
     if(save_neuron_values==true)
     {
         file<<'R'<<endl;//R for recall
@@ -1322,6 +1337,46 @@ void net::SetWeights(double val)
      }
 
 }
+
+float net::GetWeights( int _layer, int _neuron, int _link)
+{
+    
+    return (float) layers.at(_layer).at(_neuron)->outweights.at(_link)->GetWeight();
+}
+
+vector<float> net::GetWeights( int _layer, int _neuron)
+{
+    vector<float> _weights;
+    for(int i=0; i<layers.at(_layer).at(_neuron)->outweights.size(); i++)
+    {
+        _weights.push_back(GetWeights( _layer, _neuron, i));
+    }
+    return _weights;
+
+}
+
+vector<float> net::GetWeights( int _layer)
+{
+    vector<float> _weights;
+    for(int i=0; i<layers.at(_layer).size(); i++) //layer size
+    {
+        for(int j=0; j< layers.at(_layer).at(i)->outweights.size(); j++) //neurons outweights
+        {
+           _weights.push_back(GetWeights(_layer, i, j));
+        }
+    }
+    return _weights;
+}
+
+vector<vector<float>> net::GetWeights(){
+    vector<vector<float>> _weights;
+    for(int i = 0; i< layers.size(); i++){
+        _weights.push_back(GetWeights(i));
+        
+    }
+    return _weights;
+}
+
 
 
 void net::CleanAfterBuild()
