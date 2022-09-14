@@ -1,0 +1,3 @@
+/home/josh/workspace/git/neural_network/CMakeFiles/rebuild_cache.dir
+/home/josh/workspace/git/neural_network/CMakeFiles/edit_cache.dir
+/home/josh/workspace/git/neural_network/CMakeFiles/neuralnetwork.dir

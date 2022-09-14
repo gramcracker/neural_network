@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC   -shared -Wl,-soname,libneuralnetwork.so -o libneuralnetwork.so CMakeFiles/neuralnetwork.dir/src/data_operations.cpp.o CMakeFiles/neuralnetwork.dir/src/link.cpp.o CMakeFiles/neuralnetwork.dir/src/net.cpp.o CMakeFiles/neuralnetwork.dir/src/neuron.cpp.o  -lpthread 
